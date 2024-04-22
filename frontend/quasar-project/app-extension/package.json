@@ -1,0 +1,22 @@
+{
+  "name": "quasar-app-extension-cupola",
+  "version": "0.0.1",
+  "description": "A Quasar App Extension",
+  "author": "group8",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Catalin246/cupola-xs"
+  },
+  "bugs": "",
+  "homepage": "",
+  "dependencies": {
+    "quasar-ui-cupola": "latest"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.6.0",
+    "yarn": ">= 1.6.0"
+  }
+}
