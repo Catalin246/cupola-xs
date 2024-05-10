@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module type="PYTHON_MODULE" version="4">
-  <component name="NewModuleRootManager">
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
-  <component name="PyDocumentationSettings">
-    <option name="format" value="PLAIN" />
-    <option name="myDocStringFormat" value="Plain" />
-  </component>
   <component name="SonarLintModuleSettings">
-    <option name="uniqueId" value="0c3593a9-0204-49d5-b4d1-61f56ad6fbaa" />
+    <option name="uniqueId" value="aa4b8876-a54b-4620-bb32-dc7e6bfb4072" />
   </component>
 </module>
