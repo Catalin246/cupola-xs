@@ -1,8 +1,26 @@
-from flask import Flask, jsonify
+from flask_restx import Api
+from flask import Blueprint
 
-app = Flask(__name__)
+from .main.controller.user_controller import api as user_ns
+from .main.controller.auth_controller import api as auth_ns
 
-# This is only a test route. Must be removed when we start building the API.
-@app.route('/')
-def index():
-    return jsonify({"message": "Welcome to the Cupola-xs test endpoint!"})
+blueprint = Blueprint('api', __name__)
+authorizations = {
+    'apikey': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization'
+    }
+}
+
+api = Api(
+    blueprint,
+    title='CUPOLA-XS',
+    version='1.0',
+    description='',
+    authorizations=authorizations,
+    security='apikey'
+)
+
+api.add_namespace(user_ns, path='/user')
+api.add_namespace(auth_ns)
