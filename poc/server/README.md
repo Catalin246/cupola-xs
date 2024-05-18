@@ -1,5 +1,19 @@
 # Start the docker container (Linux)
 
+## Install the required packages
+
+pip install flask-bcrypt
+
+pip install flask-restplus
+
+pip install Flask-Migrate
+
+pip install pyjwt
+
+pip install Flask-Script
+
+pip install flask_testing
+
 ## Build the container
 
 `docker build -t cupola-xs-app .`
