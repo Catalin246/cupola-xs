@@ -1,8 +1,17 @@
-from flask import Flask, jsonify
+import os
+import unittest
 
-app = Flask(__name__)
+from flask_migrate import Migrate
+from .main.model import models
 
-# This is only a test route. Must be removed when we start building the API.
-@app.route('/')
-def index():
-    return jsonify({"message": "Welcome to the Cupola-xs test endpoint!"})
+from app.main import create_app, db
+
+app = create_app(os.getenv('CUPOLAXS_ENV') or 'dev')
+
+app.app_context().push()
+
+
+migrate = Migrate(app, db)
+
+if __name__ == '__main__':
+    app.run()
