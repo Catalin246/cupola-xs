@@ -17,3 +17,10 @@ class AuthDto:
         'email': fields.String(required=True, description='The email address'),
         'password': fields.String(required=True, description='The user password '),
     })
+
+class WifiDataDto:
+    api = Namespace('wifi', description = 'wifi data related operations')
+    wifi_data = api.model('wifi', {
+        'date': fields.DateTime(required=True, description='date of device being online'),
+        'total_online_devices': fields.String(required=True, description='total online devices of the day')
+    })
