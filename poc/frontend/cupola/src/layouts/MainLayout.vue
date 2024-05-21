@@ -1,36 +1,14 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
     <q-drawer
-      v-model="leftDrawerOpen"
       show-if-above
-      bordered
+      :style="drawerStyles"
+      side="left"
     >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+      <!-- drawer content -->
+      <img src="/cupolaLogo.png" alt="Cupola Logo" class="logo">
 
+      <q-list>
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
@@ -47,60 +25,52 @@
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
 
-defineOptions({
-  name: 'MainLayout'
-})
+// Define the sidebar (drawer) styles
+const drawerStyles = {
+  width: '228px',
+  height: '1024px',
+  flexShrink: 0,
+  backgroundColor: '#4E8FF1'
+}
 
+// Define the list of essential links
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Wifi',
+    caption: 'Wifi prediction',
+    icon: 'wifi',
+    link: '/wifi'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Cinema',
+    caption: 'Cinema prediction',
+    icon: 'movie',
+    link: '/cinema'
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    title: 'Logout',
+    caption: 'Logout',
+    icon: 'logout',
+    link: '/logout',
+    requiresAuth: true
   }
 ]
 
-const leftDrawerOpen = ref(false)
+// Define the drawer open state
+const leftDrawerOpen = ref(true)
 
-function toggleLeftDrawer () {
+// Function to toggle the drawer open state
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
+
+<style scoped>
+.logo {
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+</style>
