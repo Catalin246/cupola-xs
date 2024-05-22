@@ -18,7 +18,7 @@ class DevelopmentConfig(Config):
     # uncomment the line below to use postgres
     # SQLALCHEMY_DATABASE_URI = postgres_local_base
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'cupola_xs__main.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'cupola_xs_main.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

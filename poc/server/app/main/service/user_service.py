@@ -17,7 +17,7 @@ def save_new_user(data: Dict[str, str]) -> Tuple[Dict[str, str], int]:
             registered_on=datetime.datetime.utcnow()
         )
         save_changes(new_user)
-        return generate_token(new_user)
+        return register_user(new_user)
     else:
         response_object = {
             'status': 'fail',
@@ -30,18 +30,11 @@ def get_all_users():
     return User.query.all()
 
 
-def get_a_user(public_id):
-    return User.query.filter_by(public_id=public_id).first()
-
-
-def generate_token(user: User) -> Tuple[Dict[str, str], int]:
+def register_user(user: User) -> Tuple[Dict[str, str], int]:
     try:
-        # generate the auth token
-        auth_token = User.encode_auth_token(user.id)
         response_object = {
             'status': 'success',
             'message': 'Successfully registered.',
-            'Authorization': auth_token.decode()
         }
         return response_object, 201
     except Exception as e:
