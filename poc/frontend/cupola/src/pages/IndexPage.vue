@@ -1,10 +1,14 @@
 <template>
   <q-page class="flex flex-center">
     <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
+      alt="Cupola logo"
+      src="cupolaLogo.png"
+       class="logo"
     >
+    <h1>Welcome to Cupola</h1>
+    <h4>
+      This is the main page - work in progress
+    </h4>
   </q-page>
 </template>
 
