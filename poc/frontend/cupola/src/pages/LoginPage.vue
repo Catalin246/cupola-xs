@@ -1,6 +1,7 @@
 <template>
   <div class="login-page">
     <div class="login-form">
+      <button class="close-button" @click="handleClose"><i class="fa-solid fa-x"></i></button>
       <h2>Welcome</h2>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
@@ -34,6 +35,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export default {
   name: 'LoginPage',
@@ -64,11 +66,16 @@ export default {
       }
     };
 
+    const handleClose = () => {
+      router.push('/');
+    };
+
     return {
       username,
       password,
       error,
       handleLogin,
+      handleClose,
     };
   },
 };
@@ -80,14 +87,23 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-image: url('/login_background.png');
+  background-size: cover;
+  background-position: center;
 }
 
 .login-form {
+  position: relative; /* Add this */
   background-color: white;
-  padding: 20px;
+  padding: 40px;
+  width: 25%;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form h2 {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .form-group {
@@ -97,21 +113,23 @@ export default {
 label {
   display: block;
   margin-bottom: 5px;
+  padding: 5px;
 }
 
 input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+  border-radius: 10px;
 }
 
 button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #4E8FF1;
   border: none;
   color: white;
-  border-radius: 4px;
+  border-radius: 40px;
   cursor: pointer;
 }
 
@@ -122,5 +140,32 @@ button:hover {
 .error {
   color: red;
   margin-top: 15px;
+}
+
+.close-button {
+  position: absolute; 
+  top: 10px; 
+  right: 10px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  color: #808080;
+  background-color: #ffffff;
+}
+
+.close-button i {
+  font-size: 16px;
 }
 </style>
