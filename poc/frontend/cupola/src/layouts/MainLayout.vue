@@ -14,6 +14,15 @@
           :key="link.title"
           v-bind="link"
         />
+        <q-item clickable v-ripple @click="logout">
+          <q-item-section avatar>
+            <q-icon name="logout" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Logout</q-item-label>
+            <q-item-label caption>Logout</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -26,6 +35,7 @@
 <script setup>
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
+import axios from 'axios';
 
 // Define the sidebar (drawer) styles
 const drawerStyles = {
@@ -48,13 +58,6 @@ const linksList = [
     caption: 'Cinema prediction',
     icon: 'movie',
     link: '/cinema'
-  },
-  {
-    title: 'Logout',
-    caption: 'Logout',
-    icon: 'logout',
-    link: '/logout',
-    requiresAuth: true
   }
 ]
 
@@ -64,6 +67,28 @@ const leftDrawerOpen = ref(true)
 // Function to toggle the drawer open state
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+// Function to handle logout
+async function logout() {
+  try {
+    const token = localStorage.getItem('jwt');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    await axios.post('http://127.0.0.1:5000/auth/logout', {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    localStorage.removeItem('jwt'); // Clear token
+    console.log('Logged out successfully');
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
 }
 </script>
 
