@@ -14,15 +14,17 @@
           :key="link.title"
           v-bind="link"
         />
-        <q-item clickable v-ripple @click="logout">
-          <q-item-section avatar>
-            <q-icon name="logout" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Logout</q-item-label>
-            <q-item-label caption>Logout</q-item-label>
-          </q-item-section>
-        </q-item>
+        <template v-if="hasToken">
+          <q-item clickable v-ripple @click="logout">
+            <q-item-section avatar>
+              <q-icon name="logout" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Logout</q-item-label>
+              <q-item-label caption>Logout</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-drawer>
 
@@ -33,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
 import axios from 'axios';
 
@@ -63,6 +65,11 @@ const linksList = [
 
 // Define the drawer open state
 const leftDrawerOpen = ref(true)
+
+// Computed property to check if JWT token exists
+const hasToken = computed(() => {
+  return !!localStorage.getItem('jwt')
+})
 
 // Function to toggle the drawer open state
 function toggleLeftDrawer() {
