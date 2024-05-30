@@ -2,11 +2,11 @@
   <q-page class="q-pa-md">
     <div class="header">
       <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
-      <q-btn :label="currentWeekLabel"  />
+      <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
       <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
     </div>
       <div class="chart-container">
-      <apexchart type="bar" :options="chartOptions" :series="series" />
+      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
     </div>
     <template v-if="hasToken">
       <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
@@ -26,8 +26,7 @@ const series = ref([{ name: 'Visitors', data: [] }])
 const chartOptions = ref({
   chart: {
     type: 'bar',
-    height: '300px',
-    width: '150px'
+
   },
   plotOptions: {
     bar: {
@@ -120,6 +119,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.q-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .header {
   display: flex;
   justify-content: center;
@@ -133,9 +138,22 @@ onMounted(() => {
   width: 200px; /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
+.week-dropdown {
+  width: 200px; /* Set a fixed width to ensure all buttons are the same size */
+  text-align: center;
+}
 
 .chart-container {
   margin-bottom: 20px;
+  width: 75%;
+  padding: 1em;
+}
+.bar-chart {
+  width: 100%;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 1em;
 }
 
 input[type="file"] {
