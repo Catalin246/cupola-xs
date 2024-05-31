@@ -57,7 +57,9 @@ export default {
           const token = response.data.Authorization;
           // Store the token in local storage or any preferred storage
           localStorage.setItem('jwt', token);
-          router.push('/'); // Redirect to home page after successful login
+          router.push('/').then(() => {
+          window.location.reload();
+          });
         } else {
           error.value = response.data.message || 'Login failed';
         }
