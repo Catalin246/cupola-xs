@@ -14,15 +14,17 @@
           :key="link.title"
           v-bind="link"
         />
-        <q-item v-if="isLoggedIn" clickable v-ripple @click="logout">
-          <q-item-section avatar>
-            <q-icon name="logout" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Logout</q-item-label>
-            <q-item-label caption>Logout</q-item-label>
-          </q-item-section>
-        </q-item>
+        <template v-if="hasToken">
+          <q-item clickable v-ripple @click="logout">
+            <q-item-section avatar>
+              <q-icon name="logout" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Logout</q-item-label>
+              <q-item-label caption>Logout</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
       </q-list>
     </q-drawer>
 
@@ -33,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {computed, ref} from 'vue'
 import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
 import axios from 'axios';
 
@@ -64,14 +66,10 @@ const linksList = [
 // Define the drawer open state
 const leftDrawerOpen = ref(true)
 
-// Define the logged-in state
-const isLoggedIn = ref(false);
-
-// Check if the user is logged in when the component mounts
-onMounted(() => {
-  const token = localStorage.getItem('jwt');
-  isLoggedIn.value = !!token; // Set to true if the token exists, false otherwise
-});
+// Computed property to check if JWT token exists
+const hasToken = computed(() => {
+  return !!localStorage.getItem('jwt')
+})
 
 // Function to toggle the drawer open state
 function toggleLeftDrawer() {
@@ -94,7 +92,6 @@ async function logout() {
     });
 
     localStorage.removeItem('jwt'); // Clear token
-    isLoggedIn.value = false; // Update the logged-in state
     console.log('Logged out successfully');
   } catch (error) {
     console.error('Logout failed:', error);

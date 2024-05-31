@@ -59,3 +59,9 @@ U
 %poc/frontend/cupola/package-lock.json,b\6\b6c795e6ed37dfe0a1573b2184cc4a1ebc9d96aa
 M
 poc/frontend/cupola/README.md,e\f\ef0ca6a7ef9d049eafeb6138a11d3ba3dd04b747
+U
+%poc/server/app/main/model/wifidata.py,2\1\21ea58d352d95661019dcd42bf8d7c022f68fcd4
+\
+,poc/frontend/cupola/src/pages/CinemaPage.vue,4\a\4ada9a3c2ac7521c55190aff2a7ecf8a8eac7ca9
+[
++poc/server/app/main/model/model_training.py,0\b\0b81bebe7fa0a1e72ae65231b62736c5583b2e58
