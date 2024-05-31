@@ -24,3 +24,11 @@ class WifiDataDto:
         'date': fields.DateTime(required=True, description='date of device being online'),
         'total_online_devices': fields.String(required=True, description='total online devices of the day')
     })
+
+class CinemaDataDto:
+    api = Namespace('cinema', description= 'cinema data related operations')
+    cinema_data = api.model('cinema', {
+        'day' : fields.String(required = True, description = 'Day of the week for number of visitors'),
+        'date' : fields.Date(required = True, description = 'Date of how many visitors came'),
+        'visitors': fields.Integer(required = True, description = 'Number of visitors that came that day') 
+    })
