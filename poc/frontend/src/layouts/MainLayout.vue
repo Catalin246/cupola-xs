@@ -36,6 +36,7 @@
 
 <script setup>
 import {computed, ref} from 'vue'
+import {useRouter} from 'vue-router'
 import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
 import axios from 'axios';
 
@@ -76,6 +77,8 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
+const router = useRouter() // Initialize the router
+
 // Function to handle logout
 async function logout() {
   try {
@@ -92,7 +95,11 @@ async function logout() {
     });
 
     localStorage.removeItem('jwt'); // Clear token
-    console.log('Logged out successfully');
+
+    // Navigate to /admin/login and then reload the page
+    router.push('/admin/login').then(() => {
+      window.location.reload();
+    });
   } catch (error) {
     console.error('Logout failed:', error);
   }
