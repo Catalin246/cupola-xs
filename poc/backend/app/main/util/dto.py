@@ -24,3 +24,9 @@ class WifiDataDto:
         'date': fields.DateTime(required=True, description='date of device being online'),
         'total_online_devices': fields.String(required=True, description='total online devices of the day')
     })
+
+class WifiPredictDto:
+    api = Namespace('prediction_wifi', description="Wi-Fi Connected Devices Predictions made by the model")
+    prediction_wifi = api.model('prediction_wifi', {
+        'date': fields.DateTime(required=True, description='date of device being online')
+    })
