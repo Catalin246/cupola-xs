@@ -1,13 +1,14 @@
+import csv
+from io import StringIO
 from flask import  request
 from flask_restx import Resource
 
 from ..util.dto import CinemaDataDto
-from ..service.cinema_data_service import get_all_cinema_data, add_cinema_data
+from ..service.cinema_data_service import get_all_cinema_data, add_cinema_data_from_csv, delete_all_cinema_data
 from typing import Dict, Tuple
 
 api = CinemaDataDto.api
 _cinemaData = CinemaDataDto.cinema_data
-
 
 @api.route('/')
 class CinemaList(Resource):
@@ -21,10 +22,22 @@ class CinemaList(Resource):
         end_date = request.args.get('end_date')
         return get_all_cinema_data(start_date, end_date)
 
-    @api.expect(_cinemaData, validate = True)
+    @api.expect(api.parser().add_argument('file', type=str, location='files'))
     @api.response(201, 'Data successfully added.')
-    @api.doc('Add new cinema data.')
-    def post(self)-> Tuple[Dict[str, str], int]:
-        """Add new cinema data """
-        data = request.json
-        return add_cinema_data(data = data)
+    @api.doc('Add new cinema data from CSV.')
+    def post(self):
+        """Add new cinema data from CSV"""
+        csv_file = request.files['file']
+        if not csv_file:
+            return {'message': 'No file uploaded'}, 400
+        
+        # Read CSV file
+        csv_data = csv_file.read().decode('utf-8')
+        csv_stream = StringIO(csv_data)
+        return add_cinema_data_from_csv(csv_stream)
+
+    @api.doc('Delete all cinema data.')
+    @api.response(204, 'Data successfully deleted.')
+    def delete(self):
+        """Delete all cinema data"""
+        return delete_all_cinema_data()
