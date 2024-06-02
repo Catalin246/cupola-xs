@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://localhost:8081' // Backend URL for API calls. Might be adjusted based on the backend server
+  baseURL: 'http://localhost:5000' // Backend URL for API calls. Might be adjusted based on the backend server
 });
 
 // Add an interceptor to set the token in the request headers
@@ -33,6 +33,13 @@ export default {
   },
   getCinemaVisitor() {
     return apiClient.get('/cinema'); //TODO i feel we should pass a date here to get the accurate cinema visitor?
+  },
+  uploadCinemaData(formData) {
+    return apiClient.post('/cinema', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 //add the remaining end points below here
 

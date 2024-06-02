@@ -84,14 +84,8 @@ const handleFileUpload = async (event) => {
   const formData = new FormData()
   formData.append('file', file)
 
-  try {
-    const token = localStorage.getItem('jwt')
-    await axios.post('http://127.0.0.1:5000/uploadCinema', formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+   try {
+    const response = await api.uploadCinemaData(formData)
     console.log('File uploaded successfully')
   } catch (error) {
     console.error('File upload failed:', error)
