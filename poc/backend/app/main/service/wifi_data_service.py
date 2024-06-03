@@ -12,6 +12,9 @@ def get_all_wifi_data():
 def get_wifi_data_by_date(wifi_data_date):
     return WifiData.query.get(wifi_data_date)
 
+def get_earliest_wifi_data():
+    return WifiData.query.order_by(WifiData.date).first()
+
 def add_wifi_data(data: Dict[str, str]) -> None:
     new_wifi_data = WifiData(
         date = datetime.strptime(data['date'], '%d-%m-%Y'),
