@@ -1,10 +1,14 @@
 import axios from 'axios';
 
+// Create an Axios instance
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000' // Backend URL for API calls. Might be adjusted based on the backend server
+  baseURL: 'http://localhost:5000', // Backend URL for API calls
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
-// Add an interceptor to set the token in the request headers
+// Add a request interceptor to set the token in the request headers
 apiClient.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -15,32 +19,39 @@ apiClient.interceptors.request.use(config => {
   return Promise.reject(error);
 });
 
-// Enable CORS headers
+// You don't need to add CORS headers on the client-side. The server should handle CORS.
+// If you want to handle responses or errors globally, you can use the response interceptor.
 apiClient.interceptors.response.use(response => {
-  // Add CORS headers to the response
-  response.headers['Access-Control-Allow-Origin'] = '*';
-  response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE';
-  response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
-
   return response;
 }, error => {
   return Promise.reject(error);
 });
+
 export default {
   // User Login
   login(loginData) {
     return apiClient.post('/login', loginData);
   },
-  getCinemaVisitor() {
-    return apiClient.get('/cinema'); //TODO i feel we should pass a date here to get the accurate cinema visitor?
+  getCinemaVisitor(date) {
+    return apiClient.post('/predict/cinema', { date });
   },
   uploadCinemaData(formData) {
     return apiClient.post('/cinema', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
-    })
-  }
-//add the remaining end points below here
+    });
+  },
+  getWifiPrediction(date) {
+    return apiClient.post('/predict/wifi', { date });
+  },
+  // Add remaining endpoints below here
+  uploadWifiData(formData) {
+    return apiClient.post('/wifi', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
 
+  }
 };
