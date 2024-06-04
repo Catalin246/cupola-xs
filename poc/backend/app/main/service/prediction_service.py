@@ -34,6 +34,5 @@ def predict_wifi_data() :
             }
         responses.append(response)
 
-    #return jsonify(predictions.tolist()[:30])
     return responses
 
