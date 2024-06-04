@@ -29,7 +29,7 @@ class WifiList(Resource):
     @api.expect(api.parser().add_argument('file', type=str, location='files'))
     @api.response(201, 'Data successfully added.')
     @api.doc('Add new wifi data from CSV.')
-    # @admin_token_required
+    @admin_token_required
     def post(self):
         """Add new wifi data from CSV"""
         csv_file = request.files['file']
