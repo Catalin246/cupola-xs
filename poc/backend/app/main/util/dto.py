@@ -37,3 +37,9 @@ class WifiPredictDto:
     prediction_wifi = api.model('prediction_wifi', {
         'date': fields.DateTime(required=True, description='date of device being online')
     })
+
+class CinemaPredictDto:
+    api = Namespace('prediction_cinema', description="Cinema Visitors Predictions made by the model")
+    prediction_cinema = api.model('prediction_cinema', {
+        'date': fields.DateTime(required=True, description='date of visitors being at Cupola')
+    })
