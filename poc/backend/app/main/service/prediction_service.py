@@ -30,7 +30,7 @@ def predict_wifi_data() :
         next_day = latest_wifi_record.date + timedelta(days=i + 1)
         response ={
                 'date': next_day.strftime('%d-%m-%Y'),
-                'total_online_devices': predictions[i][0]
+                'total_online_devices': round(predictions[i][0])
             }
         responses.append(response)
 

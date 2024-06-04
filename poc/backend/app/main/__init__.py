@@ -16,9 +16,6 @@ flask_bcrypt = Bcrypt()
 
 ml_model_wifi = load_model('wifidata_model.h5')
 
-with open('scaler_wifi.pkl', 'rb') as f:
-    scaler_wifi = pickle.load(f)
-
 ml_model_cinema = load_model('cinemadata_model.h5')
 
 with open('scaler_cinema.pkl', 'rb') as f:
