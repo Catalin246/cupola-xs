@@ -23,17 +23,10 @@ import dayjs from 'dayjs'
 // Series and chart options for the chart
 const series = ref([
   { name: 'Devices', data: [] },
-  { name: 'Devices', data: [] },
-  { name: 'Devices', data: [] },
-  { name: 'Devices', data: [] },
-  { name: 'Devices', data: [] },
-  { name: 'Devices', data: [] },
-  { name: 'Devices', data: [] }
 ])
 const chartOptions = ref({
   chart: {
     type: 'bar',
-
   },
   plotOptions: {
     bar: {
@@ -56,16 +49,16 @@ const chartOptions = ref({
     title: {
       text: 'Number of Connected Devices'
     }
+  },
+  legend: {
+    show: false // This hides the legend
   }
 })
-
 // Function to fetch visitor data
 const fetchVisitorData = async () => {
   try {
     const response = await api.getWifiPrediction(currentWeek.value.format('DD-MM-YYYY'))
- for (let i = 0; i < 7; i++) {
-      series.value[i].data = response.data[i]
-    }
+    series.value[0].data = response.data.map(dayData => dayData[0])
   } catch (error)  {
     console.error(error)
   }
