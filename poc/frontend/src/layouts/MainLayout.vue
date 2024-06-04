@@ -6,7 +6,7 @@
       side="left"
     >
       <!-- drawer content -->
-      <img src="/cupolaLogo.png" alt="Cupola Logo" class="logo">
+      <img src="/cupolaLogo.png" alt="Cupola Logo" class="logo" @click="this.$router.push('/')">
 
       <q-list>
         <EssentialLink
@@ -111,5 +111,6 @@ async function logout() {
   width: 100%;
   padding: 16px;
   box-sizing: border-box;
+  cursor: pointer;
 }
 </style>
