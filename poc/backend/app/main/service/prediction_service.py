@@ -26,7 +26,9 @@ def predict_wifi_data() :
 
     responses = []
 
-    for i in range(0, 30):
+    predict_window = 30
+
+    for i in range(0, predict_window):
         next_day = latest_wifi_record.date + timedelta(days=i + 1)
         response ={
                 'date': next_day.strftime('%d-%m-%Y'),
