@@ -22,7 +22,7 @@ import api from '../../axios'
 import dayjs from 'dayjs'
 
 // Series and chart options for the chart
-const series = ref([{ name: 'Visitors', data: [] }])
+const series = ref([{ name: 'Cinema Visitors', data: [] }])
 const chartOptions = ref({
   chart: {
     type: 'bar',
@@ -44,14 +44,16 @@ const chartOptions = ref({
     text: 'Cinema Visitors by Day',
     align: 'center'
   },
-  colors: ['#7DCFB6', '#7DCFB6', '#7DCFB6', '#7DCFB6', '#7DCFB6', '#7DCFB6', '#7DCFB6'], // Add your custom colors here
+  colors: ['#7DCFB6'],
   yaxis: {
     title: {
-      text: 'Number of Visitors'
+      text: 'Number of Connected Devices'
     }
+  },
+  legend: {
+    show: false // This hides the legend
   }
 })
-
 // Computed property to check if JWT token exists
 const hasToken = computed(() => {
   return !!localStorage.getItem('jwt')
@@ -69,8 +71,8 @@ const currentWeekLabel = computed(() => {
 // Function to fetch visitor data
 const fetchVisitorData = async () => {
   try {
-    const response = await api.getCinemaVisitor(currentWeek.value)
-    series.value[0].data = response.data
+    const response = await api.getCinemaVisitor(currentWeek.value.format('DD-MM-YYYY'))
+    series.value[0].data = response.data.map(dayData => dayData[0])
   } catch (error) {
     console.error(error)
   }

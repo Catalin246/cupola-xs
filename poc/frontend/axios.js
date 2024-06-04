@@ -31,8 +31,8 @@ export default {
   login(loginData) {
     return apiClient.post('/login', loginData);
   },
-  getCinemaVisitor() {
-    return apiClient.get('/cinema'); //TODO i feel we should pass a date here to get the accurate cinema visitor?
+  getCinemaVisitor(date) {
+    return apiClient.get('/predict/cinema', date);
   },
   uploadCinemaData(formData) {
     return apiClient.post('/cinema', formData, {
