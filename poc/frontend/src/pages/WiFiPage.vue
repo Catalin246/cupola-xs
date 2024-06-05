@@ -1,18 +1,20 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="header">
-      <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
-      <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
-      <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
-    </div>
-    <div class="chart-container">
-      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
-    </div>
-    <template v-if="hasToken">
-      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
-    </template>
-    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
-  </q-page>
+  <q-responsive :ratio="16/9" class="col">
+    <q-page class="q-pa-md">
+      <div class="header">
+        <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
+        <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
+        <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
+      </div>
+      <div class="chart-container">
+        <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
+      </div>
+      <template v-if="hasToken">
+        <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
+      </template>
+      <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+    </q-page>
+  </q-responsive>
 </template>
 
 <script setup>
