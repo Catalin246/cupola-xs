@@ -46,7 +46,7 @@ const chartOptions = ref({
     text: 'Wifi Devices by Day',
     align: 'center'
   },
-  colors: ['#7DCFB6'],
+  colors: ['#F0803C'],
   yaxis: {
     title: {
       text: 'Number of Connected Devices'
