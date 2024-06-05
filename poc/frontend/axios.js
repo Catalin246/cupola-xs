@@ -32,8 +32,8 @@ export default {
   login(loginData) {
     return apiClient.post('/login', loginData);
   },
-  getCinemaVisitor(date) {
-    return apiClient.post('/predict/cinema', { date });
+  getCinemaVisitor() {
+    return apiClient.post('/predict/cinema');
   },
   uploadCinemaData(formData) {
     return apiClient.post('/cinema', formData, {
@@ -42,8 +42,8 @@ export default {
       }
     });
   },
-  getWifiPrediction(date) {
-    return apiClient.post('/predict/wifi', { date });
+  getWifiPrediction() {
+    return apiClient.post('/predict/wifi');
   },
   // Add remaining endpoints below here
   uploadWifiData(formData) {
