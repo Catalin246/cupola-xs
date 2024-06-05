@@ -1,32 +1,38 @@
 <template>
   <q-page class="q-pa-md">
     <div class="header">
-      <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
-      <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
-      <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
+      <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
+             class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;"/>
+      <q-btn :label="currentWeekLabel" disable class="week-dropdown"/>
+      <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
+             class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
     </div>
-      <div class="chart-container">
-      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
+    <div class="chart-container">
+      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series"/>
     </div>
     <template v-if="hasToken">
-      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
+      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary"/>
     </template>
-    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;"/>
   </q-page>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import {ref, computed, onMounted} from 'vue'
 import api from '../../axios'
 import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween'
+
+dayjs.extend(isBetween)
 
 // Series and chart options for the chart
-const series = ref([{ name: 'Cinema Visitors', data: [] }])
+const series = ref([{name: 'Cinema Visitors', data: []}])
+const currentWeek = ref(dayjs().startOf('week'))
+const monthlyData = ref([])
+
 const chartOptions = ref({
   chart: {
     type: 'bar',
-
   },
   plotOptions: {
     bar: {
@@ -54,29 +60,74 @@ const chartOptions = ref({
     show: false // This hides the legend
   }
 })
+
 // Computed property to check if JWT token exists
 const hasToken = computed(() => {
   return !!localStorage.getItem('jwt')
 })
 
-// State to track the current week
-const currentWeek = ref(dayjs().startOf('week'))
+const fetchVisitorData = async () => {
+  try {
+    const response = await api.getCinemaVisitor();
+    monthlyData.value = response.data.map(item => ({
+      date: formatStringToDate(item.date),
+      visitors: item.visitors
+   }))
+    // Set the current week to the start of the data
+    const startDate = new Date(monthlyData.value[0].date);
+    currentWeek.value = dayjs(startDate).startOf('week').clone();
+    updateChartData();
+  } catch (error) {
+    console.error(error);
+  }
+};
+const formatStringToDate = (dateString) => {
+  const [day, month, year] = dateString.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+// Update the data for the current week
+const updateChartData = () => {
+  // Ensure that monthlyData has been populated
+  if (Object.keys(monthlyData.value).length === 0) return;
+
+  // Get the data for the current week
+  const currentWeekVisitors = [];
+  for (let i = 0; i < 7; i++) {
+    const currentDate = currentWeek.value.add(i, 'day').toDate();
+    const matchingData = monthlyData.value.find(item => dayjs(item.date).isSame(currentDate, 'day'));
+    currentWeekVisitors.push(matchingData ? matchingData.visitors : 0);
+  }
+  console.log('Current week data:', currentWeekVisitors)
+  // Update the series with the current week's data
+  series.value = [{ name: 'Cinema Visitors', data: currentWeekVisitors }];
+};
+
+// Function to check if navigation is possible
+const canNavigate = (direction) => {
+  if (Object.keys(monthlyData.value).length === 0) return false;
+if (currentWeek.value.isBefore(dayjs(monthlyData.value[0].date), 'day') && direction === -1) {
+    return false;
+  }
+  if (currentWeek.value.isAfter(dayjs(monthlyData.value[monthlyData.value.length - 1].date), 'day') && direction === 1) {
+    return false;
+  }
+  return true;
+};
+
+// Function to change the current week
+const changeWeek = (direction) => {
+  if (canNavigate(direction)) {
+    currentWeek.value = currentWeek.value.add(direction * 7, 'day').clone()
+    updateChartData()
+  }
+}
 
 const currentWeekLabel = computed(() => {
   const startOfWeek = currentWeek.value.format('DD MMM')
   const endOfWeek = currentWeek.value.add(6, 'day').format('DD MMM')
   return `${startOfWeek} - ${endOfWeek}`
 })
-
-// Function to fetch visitor data
-const fetchVisitorData = async () => {
-  try {
-    const response = await api.getCinemaVisitor(currentWeek.value.format('DD-MM-YYYY'))
-    series.value[0].data = response.data.map(dayData => dayData[0])
-  } catch (error) {
-    console.error(error)
-  }
-}
 
 // Function to handle file upload
 const handleFileUpload = async (event) => {
@@ -86,9 +137,10 @@ const handleFileUpload = async (event) => {
   const formData = new FormData()
   formData.append('file', file)
 
-   try {
+  try {
     const response = await api.uploadCinemaData(formData)
     console.log('File uploaded successfully')
+    fetchVisitorData() // Refetch data after upload
   } catch (error) {
     console.error('File upload failed:', error)
   }
@@ -100,12 +152,6 @@ const uploadFile = () => {
   if (fileInput) {
     fileInput.click()
   }
-}
-
-// Function to change the current week
-const changeWeek = (direction) => {
-  currentWeek.value = currentWeek.value.add(direction * 7, 'day')
-  fetchVisitorData()
 }
 
 onMounted(() => {
@@ -121,6 +167,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 }
+
 .header {
   display: flex;
   justify-content: center;
@@ -128,17 +175,18 @@ onMounted(() => {
   gap: 0;
   padding-bottom: 3em;
 }
+
 .week-btn {
   background-color: #4E8FF1;
   color: white;
   width: 200px; /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
+
 .week-dropdown {
   width: 200px; /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
-
 .chart-container {
   margin-bottom: 20px;
   width: 75%;
@@ -151,7 +199,6 @@ onMounted(() => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 1em;
 }
-
 input[type="file"] {
   display: none;
 }
