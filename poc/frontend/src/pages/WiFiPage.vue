@@ -1,9 +1,11 @@
 <template>
   <q-page class="q-pa-md">
     <div class="header">
-      <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
-      <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
-      <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
+      <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
+             class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;"/>
+      <q-btn :label="currentWeekLabel" disable class="week-dropdown"/>
+      <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
+             class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
     </div>
     <div class="chart-container">
       <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
@@ -54,13 +56,61 @@ const chartOptions = ref({
     show: false // This hides the legend
   }
 })
-// Function to fetch visitor data
+const currentWeek = ref(dayjs().startOf('week'))
+const monthlyData = ref([])
 const fetchVisitorData = async () => {
   try {
-    const response = await api.getWifiPrediction(currentWeek.value.format('DD-MM-YYYY'))
-    series.value[0].data = response.data.map(dayData => dayData[0])
-  } catch (error)  {
-    console.error(error)
+    const response = await api.getWifiPrediction();
+    monthlyData.value = response.data.map(item => ({
+      date: formatStringToDate(item.date),
+      devices: item.total_online_devices
+    }))
+    console.log('Monthly data:', monthlyData.value)
+    console.log(monthlyData.value[0].date)
+    // Set the current week to the start of the data
+    const startDate = new Date(monthlyData.value[0].date);
+    currentWeek.value = dayjs(startDate).startOf('week').clone();
+    updateChartData();
+  } catch (error) {
+    console.error(error);
+  }
+};
+const formatStringToDate = (dateString) => {
+  const [day, month, year] = dateString.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+// Update the data for the current week
+const updateChartData = () => {
+  // Ensure that monthlyData has been populated
+  if (Object.keys(monthlyData.value).length === 0) return;
+
+  // Get the data for the current week
+  const currentWeekDevices = [];
+  for (let i = 0; i < 7; i++) {
+    const currentDate = currentWeek.value.add(i, 'day').toDate();
+    const matchingData = monthlyData.value.find(item => dayjs(item.date).isSame(currentDate, 'day'));
+    currentWeekDevices.push(matchingData ? matchingData.devices : 0);
+  }
+  console.log('Current week data:', currentWeekDevices)
+  // Update the series with the current week's data
+  series.value = [{ name: 'Devices', data: currentWeekDevices }];
+};
+
+// Function to check if navigation is possible
+const canNavigate = (direction) => {
+  if (Object.keys(monthlyData.value).length === 0) return false;
+  if (currentWeek.value.isBefore(dayjs(monthlyData.value[0].date), 'day') && direction === -1) {
+    return false;
+  }
+  return !(currentWeek.value.isAfter(dayjs(monthlyData.value[monthlyData.value.length - 1].date), 'day') && direction === 1);
+};
+
+// Function to change the current week
+const changeWeek = (direction) => {
+  if (canNavigate(direction)) {
+    currentWeek.value = currentWeek.value.add(direction * 7, 'day').clone()
+    updateChartData()
   }
 }
 
@@ -68,9 +118,6 @@ const fetchVisitorData = async () => {
 const hasToken = computed(() => {
   return !!localStorage.getItem('jwt')
 })
-
-// State to track the current week
-const currentWeek = ref(dayjs().startOf('week'))
 
 const currentWeekLabel = computed(() => {
   const startOfWeek = currentWeek.value.format('DD MMM')
@@ -102,12 +149,6 @@ const uploadFile = () => {
   if (fileInput) {
     fileInput.click()
   }
-}
-
-// Function to change the current week
-const changeWeek = (direction) => {
-  currentWeek.value = currentWeek.value.add(direction * 7, 'day')
-  fetchVisitorData()
 }
 
 onMounted(() => {
