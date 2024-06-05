@@ -1,12 +1,30 @@
 <template>
   <q-layout view="lHh Lpr lFf">
+    <q-header>
+      <q-toolbar>
+        <q-btn
+          v-if="isMobile"
+          flat
+          dense
+          round
+          icon="menu"
+          @click="leftDrawerOpen = !leftDrawerOpen"
+          class="q-mr-sm"
+        />
+        <q-toolbar-title>
+          Cupola-XS
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-header>
+
     <q-drawer
-      show-if-above
-      :style="drawerStyles"
+      v-model="leftDrawerOpen"
+      :show-if-above="true"
       side="left"
+      bordered
     >
       <!-- drawer content -->
-      <img src="/cupolaLogo.png" alt="Cupola Logo" class="logo" @click="this.$router.push('/')">
+      <img src="/cupolaLogo.png" alt="Cupola Logo" class="logo" @click="$router.push('/')">
 
       <q-list>
         <EssentialLink
@@ -34,10 +52,13 @@
   </q-layout>
 </template>
 
+
+
 <script setup>
 import {computed, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
+import { useQuasar } from 'quasar'
 import axios from 'axios';
 
 // Define the sidebar (drawer) styles
@@ -47,6 +68,10 @@ const drawerStyles = {
   flexShrink: 0,
   backgroundColor: '#4E8FF1'
 }
+
+//Check to see if resolution is mobile
+const $q = useQuasar()
+const isMobile = computed(() => $q.screen.lt.sm);
 
 // Define the list of essential links
 const linksList = [
