@@ -1,9 +1,9 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header>
-      <q-toolbar>
+      <q-toolbar v-if="isMobile">
         <q-btn
-          v-if="isMobile"
+          
           flat
           dense
           round
@@ -20,6 +20,7 @@
     <q-drawer
       v-model="leftDrawerOpen"
       :show-if-above="true"
+      :style="drawerStyles"
       side="left"
       bordered
     >
