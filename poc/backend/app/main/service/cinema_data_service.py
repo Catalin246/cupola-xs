@@ -7,15 +7,8 @@ from datetime import datetime
 from typing import Dict, Tuple, Union
 
     
-def get_all_cinema_data(start_date: str = None, end_date: str = None):
-    query = CinemaData.query
-    if start_date:
-        start_date = date.fromisoformat(start_date)
-        query = query.filter(CinemaData.date >= start_date)
-    if end_date:
-        end_date = date.fromisoformat(end_date)
-        query = query.filter(CinemaData.date <= end_date)
-    return query.all()
+def get_all_cinema_data():
+    return CinemaData.query.all()
 
 def add_cinema_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]:
     try:
@@ -24,13 +17,21 @@ def add_cinema_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]
             if not row['Visitor']:
                 # If the visitor count is empty, skip this entry or handle it as needed
                 continue
-                
-            new_cinema_data = CinemaData(
+
+            parsed_date = datetime.strptime(row['Date'], '%d/%m/%Y').date()
+            existing_record = CinemaData.query.filter_by(date=parsed_date).first()
+            if existing_record:
+                existing_record.day = row['Day']
+                existing_record.visitors = int(row['Visitor'])
+                save_changes(existing_record)
+            else:
+                new_cinema_data = CinemaData(
                 day=row['Day'],
                 date=datetime.strptime(row['Date'], '%d/%m/%Y'),
                 visitors=int(row['Visitor'])
             )
-            save_changes(new_cinema_data)
+                save_changes(new_cinema_data)
+            
 
         response_object = {
             'status': 'success',
