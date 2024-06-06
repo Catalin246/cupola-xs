@@ -65,8 +65,7 @@ const fetchVisitorData = async () => {
       date: formatStringToDate(item.date),
       devices: item.total_online_devices
     }))
-    console.log('Monthly data:', monthlyData.value)
-    console.log(monthlyData.value[0].date)
+
     // Set the current week to the start of the data
     const startDate = new Date(monthlyData.value[0].date);
     currentWeek.value = dayjs(startDate).startOf('week').clone();
@@ -92,7 +91,6 @@ const updateChartData = () => {
     const matchingData = monthlyData.value.find(item => dayjs(item.date).isSame(currentDate, 'day'));
     currentWeekDevices.push(matchingData ? matchingData.devices : 0);
   }
-  console.log('Current week data:', currentWeekDevices)
   // Update the series with the current week's data
   series.value = [{ name: 'Devices', data: currentWeekDevices }];
 };
