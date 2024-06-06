@@ -10,6 +10,7 @@
     <div class="chart-container">
       <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
     </div>
+    <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable </h5>
     <template v-if="hasToken">
       <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
     </template>
@@ -58,6 +59,7 @@ const chartOptions = ref({
 })
 const currentWeek = ref(dayjs().startOf('week'))
 const monthlyData = ref([])
+const accuratePredictionDate = ref('')
 const fetchVisitorData = async () => {
   try {
     const response = await api.getWifiPrediction();
@@ -65,8 +67,7 @@ const fetchVisitorData = async () => {
       date: formatStringToDate(item.date),
       devices: item.total_online_devices
     }))
-    console.log('Monthly data:', monthlyData.value)
-    console.log(monthlyData.value[0].date)
+
     // Set the current week to the start of the data
     const startDate = new Date(monthlyData.value[0].date);
     currentWeek.value = dayjs(startDate).startOf('week').clone();
@@ -80,31 +81,50 @@ const formatStringToDate = (dateString) => {
   return new Date(year, month - 1, day)
 }
 
-// Update the data for the current week
 const updateChartData = () => {
   // Ensure that monthlyData has been populated
   if (Object.keys(monthlyData.value).length === 0) return;
 
+  // Update accuratePredictionDate
+  accuratePredictionDate.value = dayjs(monthlyData.value[0].date).add(30, 'day').format('DD MMM YYYY');
+
   // Get the data for the current week
   const currentWeekDevices = [];
+  const currentWeekColors = [];
   for (let i = 0; i < 7; i++) {
     const currentDate = currentWeek.value.add(i, 'day').toDate();
     const matchingData = monthlyData.value.find(item => dayjs(item.date).isSame(currentDate, 'day'));
     currentWeekDevices.push(matchingData ? matchingData.devices : 0);
+
+    // If the item.date is 30 days or more after the first item.date, then the color will be red
+    if (matchingData && dayjs(matchingData.date).diff(dayjs(monthlyData.value[0].date), 'day') >= 30) {
+      currentWeekColors.push('#FFD542');
+    } else {
+      currentWeekColors.push('#F0803C');
+    }
   }
-  console.log('Current week data:', currentWeekDevices)
+
   // Update the series with the current week's data
   series.value = [{ name: 'Devices', data: currentWeekDevices }];
+
+  // Assign the colors array
+  chartOptions.value = {
+    ...chartOptions.value,
+    colors: currentWeekColors
+  };
 };
 
 // Function to check if navigation is possible
 const canNavigate = (direction) => {
-  if (Object.keys(monthlyData.value).length === 0) return false;
-  if (currentWeek.value.isBefore(dayjs(monthlyData.value[0].date), 'day') && direction === -1) {
-    return false;
-  }
-  return !(currentWeek.value.isAfter(dayjs(monthlyData.value[monthlyData.value.length - 1].date), 'day') && direction === 1);
+  if (!monthlyData.value.length) return false;
+
+  const newWeek = currentWeek.value.add(direction * 7, 'day');
+  const firstDate = dayjs(monthlyData.value[0].date);
+  const lastDate = dayjs(monthlyData.value[monthlyData.value.length - 1].date);
+
+  return !(newWeek.isBefore(firstDate, 'day') || newWeek.endOf('week').isAfter(lastDate, 'day'));
 };
+
 
 // Function to change the current week
 const changeWeek = (direction) => {
