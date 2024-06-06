@@ -38,12 +38,17 @@ def add_wifi_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]:
                 except ValueError:
                     # Handle date parsing error, skip this entry
                     continue
-                
-                new_wifi_data = WifiData(
+                existing_record = WifiData.query.filter_by(date=date_time_obj).first()
+                if existing_record:
+                     existing_record.total_online_devices = total_online_devices
+                     add_to_database(existing_record)
+                else:
+                     new_wifi_data = WifiData(
                     date=date_time_obj,
                     total_online_devices=total_online_devices
                 )
-                add_to_database(new_wifi_data)
+                     add_to_database(new_wifi_data)    
+
             else:
                 # Skip the entry if it cannot be converted to an integer
                 continue
