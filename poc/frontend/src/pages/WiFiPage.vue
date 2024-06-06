@@ -1,20 +1,20 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="header">
-      <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
-             class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;"/>
-      <q-btn :label="currentWeekLabel" disable class="week-dropdown"/>
-      <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
-             class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
-    </div>
-    <div class="chart-container">
-      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
-    </div>
-    <template v-if="hasToken">
-      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
-    </template>
-    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
-  </q-page>
+  <q-responsive :ratio="16/9" class="col">
+    <q-page class="q-pa-md">
+      <div class="header">
+        <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
+        <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
+        <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
+      </div>
+      <div class="chart-container">
+        <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
+      </div>
+      <template v-if="hasToken">
+        <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
+      </template>
+      <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+    </q-page>
+  </q-responsive>
 </template>
 
 <script setup>
@@ -54,7 +54,38 @@ const chartOptions = ref({
   },
   legend: {
     show: false // This hides the legend
-  }
+  },
+  responsive: [
+    {
+      breakpoint: 600,
+      options: {
+        plotOptions: {
+          bar: {
+            columnWidth: '70%',
+          }
+        },
+        xaxis: {
+          labels: {
+            style: {
+              fontSize: '10px',
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              fontSize: '10px',
+            }
+          }
+        },
+        title: {
+          style: {
+            fontSize: '12px',
+          }
+        }
+      }
+    }
+  ]
 })
 const currentWeek = ref(dayjs().startOf('week'))
 const monthlyData = ref([])
@@ -197,5 +228,20 @@ onMounted(() => {
 
 input[type="file"] {
   display: none;
+}
+/* Responsive styling */
+@media (max-width: 600px) {
+  .chart-container {
+    width: 100%;
+    padding: 0.5em;
+  }
+
+  .bar-chart {
+    padding: 0.5em;
+  }
+
+  .week-btn, .week-dropdown {
+    width: 150px; /* Adjust width for smaller screens */
+  }
 }
 </style>
