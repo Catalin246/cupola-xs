@@ -241,7 +241,8 @@ input[type="file"] {
   }
 
   .week-btn, .week-dropdown {
-    width: 150px; /* Adjust width for smaller screens */
+    width: 150px;
+    height: 50px;
   }
 }
 </style>
