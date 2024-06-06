@@ -7,6 +7,13 @@ from typing import Dict, Tuple, Union
 import re
 from flask import jsonify
 
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+import numpy as np
+
 def get_all_wifi_data():
     return WifiData.query.all()
 
@@ -21,7 +28,6 @@ def add_wifi_data(data: Dict[str, str]) -> None:
         date = datetime.strptime(data['date'], '%d-%m-%Y'),
         total_online_devices = data['total_online_devices']
     )
-
 
 def add_wifi_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]:
     try:
@@ -47,8 +53,12 @@ def add_wifi_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]:
             else:
                 # Skip the entry if it cannot be converted to an integer
                 continue
+        retrain_and_save_wifi_model()
 
-        return ({"message": "Data added successfully"}), 201
+        return ({
+            'status': 'success',
+            'message': 'Successfully added data from CSV.',
+        }), 201
 
     except Exception as e:
         # Handle exceptions
@@ -72,3 +82,43 @@ def delete_wifi_data():
 def add_to_database(data: WifiData) -> None:
     db.session.add(data)
     db.session.commit()
+
+def create_sequences(data, seq_length):
+    X, y = [], []
+    for i in range(len(data) - seq_length):
+        X.append(data[i:i + seq_length])
+        y.append(data[i + seq_length])
+    return np.array(X), np.array(y)
+
+def retrain_and_save_wifi_model():
+    # Convert to numpy array
+    all_data = get_all_wifi_data()
+
+   # Convert to numpy array
+    scaled_data = np.array([data.total_online_devices for data in all_data]).reshape(-1, 1)
+
+    # Define sequence length
+    seq_length = 7
+
+    # Create sequences for LSTM input
+    X, y = create_sequences(scaled_data, seq_length)
+
+    # Split data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+
+    # Reshape data to fit LSTM input requirements
+    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+
+    # Define LSTM model architecture
+    model = Sequential()
+    model.add(LSTM(50, activation='relu', return_sequences=True, input_shape=(seq_length, 1)))
+    model.add(LSTM(50, activation='relu'))
+    model.add(Dense(1))
+    model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
+
+    # Train the model
+    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=0)
+
+    # Save the model
+    model.save("wifidata_model.h5")

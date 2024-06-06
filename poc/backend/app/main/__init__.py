@@ -18,9 +18,6 @@ ml_model_wifi = load_model('wifidata_model.h5')
 
 ml_model_cinema = load_model('cinemadata_model.h5')
 
-# with open('scaler_cinema.pkl', 'rb') as f:
-#     scaler_cinema = pickle.load(f)
-
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config_by_name[config_name])
