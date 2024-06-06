@@ -12,7 +12,6 @@ from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
 import numpy as np
-
     
 def get_all_cinema_data(start_date: str = None, end_date: str = None):
     query = CinemaData.query
@@ -112,5 +111,4 @@ def retrain_and_save_cinema_model():
 
     # Save the model
     model.save("cinemadata_model.h5")
-
 
