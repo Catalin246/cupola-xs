@@ -116,12 +116,15 @@ const updateChartData = () => {
 
 // Function to check if navigation is possible
 const canNavigate = (direction) => {
-  if (Object.keys(monthlyData.value).length === 0) return false;
-  if (currentWeek.value.isBefore(dayjs(monthlyData.value[0].date), 'day') && direction === -1) {
-    return false;
-  }
-  return !(currentWeek.value.isAfter(dayjs(monthlyData.value[monthlyData.value.length - 1].date), 'day') && direction === 1);
+  if (!monthlyData.value.length) return false;
+
+  const newWeek = currentWeek.value.add(direction * 7, 'day');
+  const firstDate = dayjs(monthlyData.value[0].date);
+  const lastDate = dayjs(monthlyData.value[monthlyData.value.length - 1].date);
+
+  return !(newWeek.isBefore(firstDate, 'day') || newWeek.endOf('week').isAfter(lastDate, 'day'));
 };
+
 
 // Function to change the current week
 const changeWeek = (direction) => {
