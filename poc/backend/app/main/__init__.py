@@ -25,9 +25,6 @@ def create_app(config_name: str) -> Flask:
     flask_bcrypt.init_app(app)
 
     # Enable CORS
-    CORS(app, resources={r"/*": {"origins": "http://localhost:9000"}},
-         supports_credentials=True,
-         methods=["GET", "POST", "DELETE", "OPTIONS"],
-         allow_headers=["Content-Type", "Authorization"])
-
+    CORS(app)
+    
     return app
