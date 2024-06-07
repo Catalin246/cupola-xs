@@ -20,11 +20,10 @@ ml_model_cinema = load_model('cinemadata_model.h5')
 
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
+    # Enable CORS
+    CORS(app)
     app.config.from_object(config_by_name[config_name])
     db.init_app(app)
     flask_bcrypt.init_app(app)
-
-    # Enable CORS
-    CORS(app)
     
     return app

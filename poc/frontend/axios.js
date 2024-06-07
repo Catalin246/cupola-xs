@@ -10,9 +10,9 @@ const apiClient = axios.create({
 
 // Add a request interceptor to set the token in the request headers
 apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('jwt');
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers['Authorization'] = `${token}`;
   }
   return config;
 }, error => {
@@ -36,8 +36,9 @@ export default {
     return apiClient.post('/predict/cinema');
   },
   uploadCinemaData(formData) {
-    return apiClient.post('/cinema', formData, {
+    return apiClient.post('/cinema/', formData, {
       headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
         'Content-Type': 'multipart/form-data'
       }
     });
