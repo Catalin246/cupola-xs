@@ -60,7 +60,38 @@ const chartOptions = ref({
   },
   legend: {
     show: false // This hides the legend
-  }
+  },
+  responsive: [
+    {
+      breakpoint: 600,
+      options: {
+        plotOptions: {
+          bar: {
+            columnWidth: '70%',
+          }
+        },
+        xaxis: {
+          labels: {
+            style: {
+              fontSize: '10px',
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              fontSize: '10px',
+            }
+          }
+        },
+        title: {
+          style: {
+            fontSize: '12px',
+          }
+        }
+      }
+    }
+  ]
 })
 
 // Computed property to check if JWT token exists
@@ -216,5 +247,20 @@ onMounted(() => {
 }
 input[type="file"] {
   display: none;
+}
+@media (max-width: 600px) {
+  .chart-container {
+    width: 100%;
+    padding: 0.5em;
+  }
+
+  .bar-chart {
+    padding: 0.5em;
+  }
+
+  .week-btn, .week-dropdown {
+    width: 150px;
+    height: 50px;
+  }
 }
 </style>
