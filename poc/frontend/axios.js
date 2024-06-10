@@ -48,8 +48,9 @@ export default {
   },
   // Add remaining endpoints below here
   uploadWifiData(formData) {
-    return apiClient.post('/wifi', formData, {
+    return apiClient.post('/wifi/', formData, {
       headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
         'Content-Type': 'multipart/form-data'
       }
     });

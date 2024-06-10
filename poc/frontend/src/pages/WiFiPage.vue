@@ -102,6 +102,8 @@ const currentWeek = ref(dayjs().startOf('week'))
 const monthlyData = ref([])
 const accuratePredictionDate = ref('')
 const message = ref('')
+const successDialogVisible = ref(false);
+const errorDialogVisible = ref(false);
 const fetchVisitorData = async () => {
   try {
     const response = await api.getWifiPrediction();
