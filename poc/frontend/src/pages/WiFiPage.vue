@@ -1,12 +1,12 @@
 <template>
-  <q-responsive :ratio="16/9" class="col">
+  <q-responsive :ratio="16 / 9" class="col">
     <q-page class="q-pa-md">
       <div class="header">
         <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
-              class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;"/>
-        <q-btn :label="currentWeekLabel" disable class="week-dropdown"/>
+          class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
+        <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
         <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
-              class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
+          class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;" />
       </div>
       <div class="chart-container">
         <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
@@ -16,6 +16,13 @@
         <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
       </template>
       <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+      <q-dialog v-model="successDialogVisible" title="Success">
+        <div style="background-color: #66FF66; padding: 1rem;">{{ message }}</div>
+      </q-dialog>
+
+      <q-dialog v-model="errorDialogVisible" title="Error">
+        <div style="background-color: #ffcccc; padding: 1rem;">{{ message }}</div>
+      </q-dialog>
     </q-page>
   </q-responsive>
 </template>
@@ -24,6 +31,7 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '../../axios'
 import dayjs from 'dayjs'
+import { Dialog } from 'quasar'
 
 // Series and chart options for the chart
 const series = ref([
@@ -93,6 +101,7 @@ const chartOptions = ref({
 const currentWeek = ref(dayjs().startOf('week'))
 const monthlyData = ref([])
 const accuratePredictionDate = ref('')
+const message = ref('')
 const fetchVisitorData = async () => {
   try {
     const response = await api.getWifiPrediction();
@@ -190,9 +199,13 @@ const handleFileUpload = async (event) => {
     const response = await api.uploadWifiData(formData)
     if (response.data.success) {
       console.log('File uploaded successfully')
+      message.value = response.data.message;
+      successDialogVisible.value = true;
     }
   } catch (error) {
     console.error('File upload failed:', error)
+    message.value = error.response.data.message;
+    errorDialogVisible.value = true;
   }
 }
 
@@ -217,6 +230,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 }
+
 .header {
   display: flex;
   justify-content: center;
@@ -224,14 +238,18 @@ onMounted(() => {
   gap: 0;
   padding-bottom: 3em;
 }
+
 .week-btn {
   background-color: #4E8FF1;
   color: white;
-  width: 200px; /* Set a fixed width to ensure all buttons are the same size */
+  width: 200px;
+  /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
+
 .week-dropdown {
-  width: 200px; /* Set a fixed width to ensure all buttons are the same size */
+  width: 200px;
+  /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
 
@@ -240,6 +258,7 @@ onMounted(() => {
   width: 75%;
   padding: 1em;
 }
+
 .bar-chart {
   width: 100%;
   background-color: white;
@@ -251,6 +270,7 @@ onMounted(() => {
 input[type="file"] {
   display: none;
 }
+
 @media (max-width: 600px) {
   .chart-container {
     width: 100%;
@@ -261,7 +281,8 @@ input[type="file"] {
     padding: 0.5em;
   }
 
-  .week-btn, .week-dropdown {
+  .week-btn,
+  .week-dropdown {
     width: 150px;
     height: 50px;
   }

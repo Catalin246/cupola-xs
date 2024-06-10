@@ -33,41 +33,45 @@ def add_wifi_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]:
     try:
         reader = csv.DictReader(csv_stream, delimiter=',')
         for row in reader:
+            if not row['Total Online Devices']:
+                continue
+
+            if not row['Date Time']:
+                continue
+
             cleaned_value = re.sub(r'\D', '', row['Total Online Devices'])
-            # Check if the cleaned value can be converted to an integer
             if cleaned_value.isdigit():
                 total_online_devices = int(cleaned_value)
-                # Extract the start date and time from 'Date Time'
                 date_time_str = row["Date Time"].split(' - ')[0]
                 try:
                     date_time_obj = datetime.strptime(date_time_str, '%d-%m-%Y %H:%M:%S')
                 except ValueError:
-                    # Handle date parsing error, skip this entry
                     continue
+
                 existing_record = WifiData.query.filter_by(date=date_time_obj).first()
                 if existing_record:
-                     existing_record.total_online_devices = total_online_devices
-                     add_to_database(existing_record)
+                    existing_record.total_online_devices = total_online_devices
+                    add_to_database(existing_record)
                 else:
-                     new_wifi_data = WifiData(
-                    date=date_time_obj,
-                    total_online_devices=total_online_devices
-                )
-                     add_to_database(new_wifi_data)    
-
+                    new_wifi_data = WifiData(
+                        date=date_time_obj,
+                        total_online_devices=total_online_devices
+                    )
+                    add_to_database(new_wifi_data)
             else:
-                # Skip the entry if it cannot be converted to an integer
                 continue
+
         retrain_and_save_wifi_model()
 
-        return ({
+        return {
             'status': 'success',
             'message': 'Successfully added data from CSV.',
-        }), 201
+        }, 201
 
     except Exception as e:
-        # Handle exceptions
-        return ({"message": str(e)}), 500
+        return {
+            'message': str(e)
+        }, 500
 
 
 def delete_wifi_data():

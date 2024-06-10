@@ -2,35 +2,47 @@
   <q-page class="q-pa-md">
     <div class="header">
       <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
-             class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;"/>
-      <q-btn :label="currentWeekLabel" disable class="week-dropdown"/>
+        class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
+      <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
       <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
-             class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;"/>
+        class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;" />
     </div>
     <div class="chart-container">
-      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series"/>
+      <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
     </div>
     <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable </h5>
     <template v-if="hasToken">
-      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary"/>
+      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
     </template>
-    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;"/>
+    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+    <q-dialog v-model="successDialogVisible" title="Success">
+      <div style="background-color: #66FF66; padding: 1rem;">{{ message }}</div>
+    </q-dialog>
+
+    <q-dialog v-model="errorDialogVisible" title="Error">
+      <div style="background-color: #ffcccc; padding: 1rem;">{{ message }}</div>
+    </q-dialog>
   </q-page>
+
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import api from '../../axios'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
+import { Dialog } from 'quasar'
 
 dayjs.extend(isBetween)
 
 // Series and chart options for the chart
-const series = ref([{name: 'Cinema Visitors', data: []}])
+const series = ref([{ name: 'Cinema Visitors', data: [] }])
 const currentWeek = ref(dayjs().startOf('week'))
 const monthlyData = ref([])
 const accuratePredictionDate = ref('')
+const successDialogVisible = ref(false);
+const errorDialogVisible = ref(false);
+const message = ref('');
 
 const chartOptions = ref({
   chart: {
@@ -105,7 +117,7 @@ const fetchVisitorData = async () => {
     monthlyData.value = response.data.map(item => ({
       date: formatStringToDate(item.date),
       visitors: item.visitors
-   }))
+    }))
     // Set the current week to the start of the data
     const startDate = new Date(monthlyData.value[0].date);
     currentWeek.value = dayjs(startDate).startOf('week').clone();
@@ -185,10 +197,14 @@ const handleFileUpload = async (event) => {
 
   try {
     const response = await api.uploadCinemaData(formData)
-    console.log('File uploaded successfully')
-    fetchVisitorData() // Refetch data after upload
+    console.log(response)
+    message.value = response.data.message;
+    successDialogVisible.value = true;
+    fetchVisitorData(); // Refetch data after upload
   } catch (error) {
     console.error('File upload failed:', error)
+    message.value = error.response.data.message;
+    errorDialogVisible.value = true;
   }
 }
 
@@ -225,19 +241,23 @@ onMounted(() => {
 .week-btn {
   background-color: #4E8FF1;
   color: white;
-  width: 200px; /* Set a fixed width to ensure all buttons are the same size */
+  width: 200px;
+  /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
 
 .week-dropdown {
-  width: 200px; /* Set a fixed width to ensure all buttons are the same size */
+  width: 200px;
+  /* Set a fixed width to ensure all buttons are the same size */
   text-align: center;
 }
+
 .chart-container {
   margin-bottom: 20px;
   width: 75%;
   padding: 1em;
 }
+
 .bar-chart {
   width: 100%;
   background-color: white;
@@ -245,9 +265,11 @@ onMounted(() => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 1em;
 }
+
 input[type="file"] {
   display: none;
 }
+
 @media (max-width: 600px) {
   .chart-container {
     width: 100%;
@@ -258,7 +280,8 @@ input[type="file"] {
     padding: 0.5em;
   }
 
-  .week-btn, .week-dropdown {
+  .week-btn,
+  .week-dropdown {
     width: 150px;
     height: 50px;
   }

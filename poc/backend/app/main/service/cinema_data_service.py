@@ -12,7 +12,8 @@ from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
 import numpy as np
-    
+from dateutil import parser as date_parser
+
 def get_all_cinema_data():
     return CinemaData.query.all()
 
@@ -21,10 +22,19 @@ def add_cinema_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]
         reader = csv.DictReader(csv_stream, delimiter=';')
         for row in reader:
             if not row['Visitor']:
-                # If the visitor count is empty, skip this entry or handle it as needed
                 continue
 
-            parsed_date = datetime.strptime(row['Date'], '%d/%m/%Y').date()
+            if not row['Date']:
+                continue
+
+            if not row['Day']:
+                continue
+
+            try:
+                parsed_date = date_parser.parse(row['Date']).date()
+            except (ValueError, TypeError):
+                continue
+
             existing_record = CinemaData.query.filter_by(date=parsed_date).first()
             if existing_record:
                 existing_record.day = row['Day']
@@ -33,7 +43,7 @@ def add_cinema_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]
             else:
                 new_cinema_data = CinemaData(
                 day=row['Day'],
-                date=datetime.strptime(row['Date'], '%d/%m/%Y'),
+                date=parsed_date,
                 visitors=int(row['Visitor'])
             )
                 save_changes(new_cinema_data)
