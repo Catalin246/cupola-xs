@@ -31,7 +31,7 @@ def add_cinema_data_from_csv(csv_stream: StringIO) -> Tuple[Dict[str, str], int]
                 continue
 
             try:
-                parsed_date = date_parser.parse(row['Date']).date()
+                parsed_date = date_parser.parse(row['Date'], dayfirst=True).date()
             except (ValueError, TypeError):
                 continue
 
