@@ -5,6 +5,8 @@ from app.main.service.cinema_data_service import get_all_cinema_data
 
 from datetime import timedelta
 
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
 
 # using number 7 as the default sequence length because a week is 7 days long
 def prepare_sequences(values, seq_length=7):
@@ -57,3 +59,38 @@ def predict_cinema_data():
 
     return responses
 
+
+def get_cinema_model_metrics():
+    cinema_data = get_all_cinema_data()
+    cinema_visitors_values = [data.visitors for data in cinema_data]
+
+    seq_length = 7
+    X = prepare_sequences(cinema_visitors_values, seq_length)
+    predictions = ml_model_cinema.predict(X).tolist()
+
+    # Ensure predictions are in the correct format
+    predictions = [pred[0] for pred in predictions]
+
+    return {
+        'mean_squared_error': mean_squared_error(cinema_visitors_values[seq_length:], predictions),
+        'mean_absolute_error': mean_absolute_error(cinema_visitors_values[seq_length:], predictions),
+        'r2_score': r2_score(cinema_visitors_values[seq_length:], predictions)
+    }
+
+
+def get_wifi_model_metrics():
+    wifi_data = get_all_wifi_data()
+    wifi_devices_values = [data.total_online_devices for data in wifi_data]
+
+    seq_length = 7
+    X = prepare_sequences(wifi_devices_values, seq_length)
+    predictions = ml_model_wifi.predict(X).tolist()
+
+    # Ensure predictions are in the correct format
+    predictions = [pred[0] for pred in predictions]
+
+    return {
+        'mean_squared_error': mean_squared_error(wifi_devices_values[seq_length:], predictions),
+        'mean_absolute_error': mean_absolute_error(wifi_devices_values[seq_length:], predictions),
+        'r2_score': r2_score(wifi_devices_values[seq_length:], predictions)
+    }
