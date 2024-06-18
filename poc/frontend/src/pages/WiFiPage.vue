@@ -1,5 +1,4 @@
 <template>
-  <q-responsive :ratio="16 / 9" class="col">
     <q-page class="q-pa-md">
       <div class="header">
         <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
@@ -24,7 +23,6 @@
         <div style="background-color: #ffcccc; padding: 1rem;">{{ message }}</div>
       </q-dialog>
     </q-page>
-  </q-responsive>
 </template>
 
 <script setup>

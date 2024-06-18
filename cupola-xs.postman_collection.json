@@ -7,6 +7,145 @@
 	},
 	"item": [
 		{
+			"name": "wifi",
+			"item": [
+				{
+					"name": "Get Wifi",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://127.0.0.1:5000/wifi/"
+					},
+					"response": []
+				},
+				{
+					"name": "Get wifi prediction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTc3NjMxMDksImlhdCI6MTcxNzY3NjcwNCwic3ViIjoxfQ.gvnwcVBiLttrUCNQP3Lv3EeXoARnGQ2hKQRZebpj57s"
+							}
+						],
+						"url": "http://127.0.0.1:5000/predict/wifi"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Wifi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTc4NDEwOTksImlhdCI6MTcxNzc1NDY5NCwic3ViIjoxfQ.DnIt968YsatYGgFMyS5H4G7ehu1i8uVSzONq-YzWpqE"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/avorn/GitHub/cupola-xs/data/RAW WiFi Data 6 months.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/wifi/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"wifi",
+								""
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete all data",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://127.0.0.1:5000/wifi/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cinema",
+			"item": [
+				{
+					"name": "Cinema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://127.0.0.1:5000/cinema"
+					},
+					"response": []
+				},
+				{
+					"name": "Get cinema prediction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://127.0.0.1:5000/predict/cinema"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Cinema",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTc4NjYyMTEsImlhdCI6MTcxNzc3OTgwNiwic3ViIjoxfQ.CLdqybnwqnyjamXOnrcdL1gpS3okP8aYyu_lP8FYG9w"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/avorn/GitHub/cupola-xs/data/cinema.csv"
+								}
+							]
+						},
+						"url": "http://127.0.0.1:5000/cinema"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete all data",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://127.0.0.1:5000/cinema/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Get Users",
 			"request": {
 				"method": "GET",
@@ -28,7 +167,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"admin@admin.com\",\n    \"username\": \"admin\",\n    \"password\": \"password\",\n    \"public_id\": \"101\"\n}\n\n",
+					"raw": "{\n    \"email\": \"admin1@admin.com\",\n    \"username\": \"admin\",\n    \"password\": \"password\",\n    \"public_id\": \"102\"\n}\n\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -66,7 +205,7 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY0NDk4NjgsImlhdCI6MTcxNjM2MzQ2Mywic3ViIjoxfQ.bf8COI4_eYj5fhv9C0rR-j1a37dENAwRS2MBVFb0XIU"
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTc4Mzk1MDAsImlhdCI6MTcxNzc1MzA5NSwic3ViIjoxfQ.cHDqNcdCT50HXMoXy3GQByNisRIy7Y0uSuVtPqrvXOU"
 					}
 				},
 				"method": "POST",
