@@ -22,7 +22,7 @@ class WifiPrediction(Resource):
 class CinemaPrediction(Resource):
     @api.doc('predict total cinema visitors based on date')
     def post(self):
-        return predict_cinema_data()
+        return predict_cinema_data(60)
 
 @api.route("/cinema/metrics")
 class CinemaMetrics(Resource):

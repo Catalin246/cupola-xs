@@ -14,8 +14,6 @@ from .config import config_by_name
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 
-ml_model_wifi = load_model('wifidata_model.h5')
-
 ml_model_wifi_hourly = load_model('wifidata_model_hourly.h5')
 
 ml_model_cinema = load_model('cinemadata_model.h5')
