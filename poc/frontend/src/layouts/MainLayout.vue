@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar v-if="isMobile">
         <q-btn
-          
+
           flat
           dense
           round
@@ -87,6 +87,18 @@ const linksList = [
     caption: 'Cinema prediction',
     icon: 'movie',
     link: '/cinema'
+  },
+  {
+    title: 'Cinema Historical Data',
+    caption: 'Cinema actual',
+    icon: 'movie',
+    link: '/cinema-actual'
+  },
+  {
+    title: 'Wifi Historical Data',
+    caption: 'Wifi actual',
+    icon: 'wifi',
+    link: '/wifi-actual'
   }
 ]
 

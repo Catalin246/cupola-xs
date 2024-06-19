@@ -28,6 +28,24 @@ const routes = [
       { path: '', component: () => import('pages/WiFiPage.vue') }
     ]
   },
+  {
+    path: '/cinema-actual',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',component: () => import('pages/CinemaHistoricalData.vue')
+      }
+    ]
+  },
+  {
+    path: '/wifi-actual',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '', component: () => import('pages/WiFiHistoricalData.vue')
+      }
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it
