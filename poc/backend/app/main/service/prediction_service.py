@@ -5,69 +5,92 @@ from app.main.service.cinema_data_service import get_all_cinema_data
 
 from datetime import timedelta
 
-def predict_wifi_data() :
-    
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+
+# using number 7 as the default sequence length because a week is 7 days long
+def prepare_sequences(values, seq_length=7):
+    sequences = []
+    for i in range(len(values) - seq_length):
+        sequences.append(values[i:i + seq_length])
+    return sequences
+
+
+def make_predictions(model, values, latest_date, predict_window=60, seq_length=7):
+    sequences = prepare_sequences(values, seq_length)
+    predictions = model.predict(sequences).tolist()
+
+    responses = []
+    for i in range(predict_window):
+        next_day = latest_date + timedelta(days=i + 1)
+        response = {
+            'date': next_day.strftime('%d-%m-%Y'),
+            'value': round(predictions[i][0])
+        }
+        responses.append(response)
+
+    return responses
+
+
+def predict_wifi_data():
     wifi_data = get_all_wifi_data()
 
-    wifi_devices_values = []
+    wifi_devices_values = [data.total_online_devices for data in wifi_data]
+    latest_wifi_record_date = wifi_data[-1].date
+    responses = make_predictions(ml_model_wifi, wifi_devices_values, latest_wifi_record_date)
 
-    for data in wifi_data:
-        wifi_devices_values.append(data.total_online_devices)
-
-    X = []
-
-    seq_length = 7
-
-    for i in range(len(wifi_devices_values) - seq_length):
-        X.append(wifi_devices_values[i:i + seq_length])
-
-    predictions = ml_model_wifi.predict(X).tolist()
-
-    latest_wifi_record = wifi_data[-1]
-
-    responses = []
-
-    predict_window = 60
-
-    for i in range(0, predict_window):
-        next_day = latest_wifi_record.date + timedelta(days=i + 1)
-        response ={
-                'date': next_day.strftime('%d-%m-%Y'),
-                'total_online_devices': round(predictions[i][0])
-            }
-        responses.append(response)
+    # Adjust the response keys for Wi-Fi data
+    for response in responses:
+        response['total_online_devices'] = response.pop('value')
 
     return responses
 
-def predict_cinema_data() :
+
+def predict_cinema_data():
     cinema_data = get_all_cinema_data()
 
-    cinema_visitors_values = []
+    cinema_visitors_values = [data.visitors for data in cinema_data]
+    latest_cinema_record_date = cinema_data[-1].date
+    responses = make_predictions(ml_model_cinema, cinema_visitors_values, latest_cinema_record_date)
 
-    for data in cinema_data:
-        cinema_visitors_values.append(data.visitors)
-
-    X = []
-
-    seq_length = 7
-
-    for i in range(len(cinema_visitors_values) - seq_length):
-        X.append(cinema_visitors_values[i:i + seq_length])
-
-    predictions = ml_model_cinema.predict(X).tolist()
-
-    latest_cinema_record = cinema_data[-1]
-
-    responses = []
-
-    predict_window = 60
-
-    for i in range(0, predict_window):
-        next_day = latest_cinema_record.date + timedelta(days=i + 1)
-        response ={
-                'date': next_day.strftime('%d-%m-%Y'),
-                'visitors': round(predictions[i][0])
-            }
-        responses.append(response)
+    # Adjust the response keys for cinema data
+    for response in responses:
+        response['visitors'] = response.pop('value')
 
     return responses
+
+
+def get_cinema_model_metrics():
+    cinema_data = get_all_cinema_data()
+    cinema_visitors_values = [data.visitors for data in cinema_data]
+
+    seq_length = 7
+    X = prepare_sequences(cinema_visitors_values, seq_length)
+    predictions = ml_model_cinema.predict(X).tolist()
+
+    # Ensure predictions are in the correct format
+    predictions = [pred[0] for pred in predictions]
+
+    return {
+        'mean_squared_error': mean_squared_error(cinema_visitors_values[seq_length:], predictions),
+        'mean_absolute_error': mean_absolute_error(cinema_visitors_values[seq_length:], predictions),
+        'r2_score': r2_score(cinema_visitors_values[seq_length:], predictions)
+    }
+
+
+def get_wifi_model_metrics():
+    wifi_data = get_all_wifi_data()
+    wifi_devices_values = [data.total_online_devices for data in wifi_data]
+
+    seq_length = 7
+    X = prepare_sequences(wifi_devices_values, seq_length)
+    predictions = ml_model_wifi.predict(X).tolist()
+
+    # Ensure predictions are in the correct format
+    predictions = [pred[0] for pred in predictions]
+
+    return {
+        'mean_squared_error': mean_squared_error(wifi_devices_values[seq_length:], predictions),
+        'mean_absolute_error': mean_absolute_error(wifi_devices_values[seq_length:], predictions),
+        'r2_score': r2_score(wifi_devices_values[seq_length:], predictions)
+    }

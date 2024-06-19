@@ -10,6 +10,18 @@
       <div class="chart-container">
         <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
       </div>
+      <!-- New Metrics Section -->
+      <div class="metrics-section q-pa-md">
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">Model Performance Metrics</div>
+            <div>Mean Squared Error: {{ meanSquaredError }}</div>
+            <div>Mean Absolute Error: {{ meanAbsoluteError }}</div>
+            <div>R² Score: {{ r2Score }}</div>
+            <div>Accuracy: {{ accuracyPercentage }}%</div>
+          </q-card-section>
+        </q-card>
+      </div>
       <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable </h5>
       <template v-if="hasToken">
         <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
@@ -30,6 +42,22 @@ import { ref, computed, onMounted } from 'vue'
 import api from '../../axios'
 import dayjs from 'dayjs'
 import { Dialog } from 'quasar'
+
+const meanSquaredError = ref('0.00');
+const meanAbsoluteError = ref('0.00');
+const r2Score = ref('0.00');
+const accuracyPercentage = ref('0.00');
+
+function getWifiMetrics() {
+  api.getWifiMetrics().then((response) => {
+    meanSquaredError.value = response.data.mean_squared_error.toFixed(2);
+    meanAbsoluteError.value = response.data.mean_absolute_error.toFixed(2);
+    r2Score.value = response.data.r2_score.toFixed(2);
+    accuracyPercentage.value = (response.data.r2_score * 100).toFixed(2);
+  }).catch((error) => {
+    console.error('Failed to get cinema metrics:', error);
+  });
+}
 
 // Series and chart options for the chart
 const series = ref([
@@ -219,6 +247,7 @@ const uploadFile = () => {
 
 onMounted(() => {
   fetchVisitorData()
+  getWifiMetrics()
 })
 
 </script>
