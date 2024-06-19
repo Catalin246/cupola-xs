@@ -129,5 +129,9 @@ def retrain_and_save_wifi_model():
     # Train the model
     model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=0)
 
-    # Save the model
-    model.save("wifidata_model.h5")
+    # Get the current date and time
+    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Save the model with the date and time appended to the filename
+    model_filename = f"models/wifi/wifidata_model_{current_datetime}.h5"
+    model.save(model_filename)
