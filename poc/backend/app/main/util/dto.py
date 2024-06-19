@@ -43,3 +43,16 @@ class CinemaPredictDto:
     prediction_cinema = api.model('prediction_cinema', {
         'date': fields.DateTime(required=True, description='date of visitors being at Cupola')
     })
+
+class AIModelDto:
+    api = Namespace('ai_model', description='AI model related operations')
+    ai_model = api.model('ai_model', {
+        'id': fields.Integer(required=True, description='ID of the model'),
+        'date': fields.DateTime(required=True, description='Date when the model was created'),
+        'model_name': fields.String(required=True, description='Name of the model'),
+        'is_active': fields.Boolean(required=True, description='Is the model active'),
+        'mean_squared_error': fields.Float(required=True, description='Mean Squared Error of the model'),
+        'mean_absolute_error': fields.Float(required=True, description='Mean Absolute Error of the model'),
+        'r2_score': fields.Float(required=True, description='R² Score of the model'),
+        'model_type': fields.String(required=True, description='Type of the model (wifi/cinema)')
+    })

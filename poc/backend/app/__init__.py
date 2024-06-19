@@ -6,6 +6,7 @@ from .main.controller.auth_controller import api as auth_ns
 from .main.controller.wifi_data_controller import api as wifi_ns
 from .main.controller.cinema_data_controller import api as cinema_ns
 from .main.controller.predict_controller import api as predict_ns
+from .main.controller.aimodel_controller import api as aimodel_ns
 
 blueprint = Blueprint('api', __name__)
 authorizations = {
@@ -30,3 +31,4 @@ api.add_namespace(auth_ns)
 api.add_namespace(wifi_ns, path='/wifi')
 api.add_namespace(cinema_ns, path='/cinema')
 api.add_namespace(predict_ns, path='/predict')
+api.add_namespace(aimodel_ns, path='/ai_model')  

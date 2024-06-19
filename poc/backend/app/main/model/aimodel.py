@@ -1,14 +1,14 @@
 from .. import db
 from datetime import datetime
 
-class Model(db.Model):
-    """ Model for storing details regarding models over time """
+class AIModel(db.Model):
+    """ AIModel for storing details regarding models over time """
 
-    __tablename__ = "model"
+    __tablename__ = "aimodel"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     model_name = db.Column(db.String(100), nullable=False)
-    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=False)
     mean_squared_error = db.Column(db.Float, nullable=False)
     mean_absolute_error = db.Column(db.Float, nullable=False)
     r2_score = db.Column(db.Float, nullable=False)

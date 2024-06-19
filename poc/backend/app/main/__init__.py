@@ -14,9 +14,9 @@ from .config import config_by_name
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 
-ml_model_wifi_hourly = load_model('models/wifi/wifidata_model_20240619_223856.h5')
+ml_model_wifi_hourly = load_model('models/wifi/wifidata_model_20240619_233511.h5')
 
-ml_model_cinema = load_model('models/cinema/cinemadata_model_20240619_220233.h5')
+ml_model_cinema = load_model('models/cinema/cinemadata_model_20240619_233538.h5')
 
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
