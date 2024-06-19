@@ -1,6 +1,9 @@
 <template>
-    <q-page-container class="container">
+  <q-page class="q-pa-md">
+  <div class="header">
       <h3>Cinema Historical Data</h3>
+  </div>
+    <div class="container">
       <div v-for="(chart, index) in charts" :key="index" class="chart-container">
         <h4>{{ chart.year }}</h4>
         <apexchart
@@ -9,8 +12,9 @@
           :options="chart.options"
           :series="chart.series"
         />
-      </div>
-    </q-page-container>
+  </div>
+    </div>
+  </q-page>
 </template>
 
 <script setup>
@@ -82,15 +86,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: center;
+}
 .container {
+  justify-content: center;
   align-items: center;
+  margin-bottom: 1em;
 }
 
-.chart-container {
- padding: 2em;
-}
-
-.line-chart {
- align-items: flex-start;
-}
 </style>
