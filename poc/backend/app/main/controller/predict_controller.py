@@ -16,7 +16,7 @@ prediction_cinema = CinemaPredictDto.prediction_cinema
 class WifiPrediction(Resource):
     @api.doc('predict total online devices based on date')
     def post(self):
-        return predict_wifi_data()
+        return predict_wifi_data(60)
     
 @api.route("/cinema")
 class CinemaPrediction(Resource):
