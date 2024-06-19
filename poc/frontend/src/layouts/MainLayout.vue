@@ -3,7 +3,6 @@
     <q-header>
       <q-toolbar v-if="isMobile">
         <q-btn
-
           flat
           dense
           round
@@ -29,7 +28,7 @@
 
       <q-list>
         <EssentialLink
-          v-for="link in linksList"
+          v-for="link in filteredLinksList"
           :key="link.title"
           v-bind="link"
         />
@@ -53,14 +52,12 @@
   </q-layout>
 </template>
 
-
-
 <script setup>
-import {computed, ref} from 'vue'
-import {useRouter} from 'vue-router'
-import EssentialLink from 'components/EssentialLink.vue' // Adjust the import according to your folder structure
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import EssentialLink from 'components/EssentialLink.vue' 
 import { useQuasar } from 'quasar'
-import axios from 'axios';
+import axios from 'axios'
 
 // Define the sidebar (drawer) styles
 const drawerStyles = {
@@ -70,9 +67,9 @@ const drawerStyles = {
   backgroundColor: '#4E8FF1'
 }
 
-//Check to see if resolution is mobile
+// Check to see if resolution is mobile
 const $q = useQuasar()
-const isMobile = computed(() => $q.screen.lt.sm);
+const isMobile = computed(() => $q.screen.lt.sm)
 
 // Define the list of essential links
 const linksList = [
@@ -91,14 +88,21 @@ const linksList = [
   {
     title: 'Cinema Historical Data',
     caption: 'Cinema actual',
-    icon: 'movie',
+    icon: 'insert_chart',
     link: '/cinema-actual'
   },
   {
     title: 'Wifi Historical Data',
     caption: 'Wifi actual',
-    icon: 'wifi',
+    icon: 'bar_chart',
     link: '/wifi-actual'
+  },
+  {
+    title: 'Models',
+    caption: 'AI & ML Models Management',
+    icon: 'smart_toy',
+    link: '/admin/model',
+    adminOnly: true 
   }
 ]
 
@@ -108,6 +112,11 @@ const leftDrawerOpen = ref(true)
 // Computed property to check if JWT token exists
 const hasToken = computed(() => {
   return !!localStorage.getItem('jwt')
+})
+
+// Computed property to filter the links list
+const filteredLinksList = computed(() => {
+  return linksList.filter(link => !link.adminOnly || (link.adminOnly && hasToken.value))
 })
 
 // Function to toggle the drawer open state
@@ -120,26 +129,26 @@ const router = useRouter() // Initialize the router
 // Function to handle logout
 async function logout() {
   try {
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem('jwt')
     if (!token) {
-      console.error('No token found');
-      return;
+      console.error('No token found')
+      return
     }
 
     await axios.post('http://127.0.0.1:5000/auth/logout', {}, {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    })
 
-    localStorage.removeItem('jwt'); // Clear token
+    localStorage.removeItem('jwt') // Clear token
 
     // Navigate to /admin/login and then reload the page
     router.push('/admin/login').then(() => {
-      window.location.reload();
-    });
+      window.location.reload()
+    })
   } catch (error) {
-    console.error('Logout failed:', error);
+    console.error('Logout failed:', error)
   }
 }
 </script>

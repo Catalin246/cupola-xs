@@ -22,6 +22,13 @@ const routes = [
     ]
   },
   {
+    path: '/admin/model',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ModelPage.vue') }
+    ]
+  },
+  {
     path: '/wifi',
     component: () => import('layouts/MainLayout.vue'),
     children: [
