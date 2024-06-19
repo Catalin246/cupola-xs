@@ -55,17 +55,5 @@ export default {
       }
     });
 
-  },
-  getCinemaMetrics() {
-    return apiClient.get('/predict/cinema/metrics');
-  },
-  getWifiMetrics() {
-    return apiClient.get('/predict/wifi/metrics');
-  },
-  getHistoricalDataCinema() {
-    return apiClient.get('/cinema');
-  },
-  getHistoricalDataWifi() {
-    return apiClient.get('/wifi');
   }
 };

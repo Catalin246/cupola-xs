@@ -2,25 +2,13 @@
   <q-page class="q-pa-md">
     <div class="header">
       <q-btn icon="arrow_back" label="Previous Week" @click="changeWeek(-1)" :disable="!canNavigate(-1)"
-             class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
+        class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
       <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
       <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
-             class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;" />
+        class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;" />
     </div>
     <div class="chart-container">
       <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" />
-    </div>
-    <!-- New Metrics Section -->
-    <div class="metrics-section q-pa-md">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Model Performance Metrics</div>
-          <div>Mean Squared Error: {{ meanSquaredError }}</div>
-          <div>Mean Absolute Error: {{ meanAbsoluteError }}</div>
-          <div>R² Score: {{ r2Score }}</div>
-          <div>Accuracy: {{ accuracyPercentage }}%</div>
-        </q-card-section>
-      </q-card>
     </div>
     <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable </h5>
     <template v-if="hasToken">
@@ -34,11 +22,9 @@
     <q-dialog v-model="errorDialogVisible" title="Error">
       <div style="background-color: #ffcccc; padding: 1rem;">{{ message }}</div>
     </q-dialog>
-
   </q-page>
 
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -57,21 +43,6 @@ const accuratePredictionDate = ref('')
 const successDialogVisible = ref(false);
 const errorDialogVisible = ref(false);
 const message = ref('');
-const meanSquaredError = ref('0.00');
-const meanAbsoluteError = ref('0.00');
-const r2Score = ref('0.00');
-const accuracyPercentage = ref('0.00');
-
-function getCinemaMetrics() {
-  api.getCinemaMetrics().then((response) => {
-    meanSquaredError.value = response.data.mean_squared_error.toFixed(2);
-    meanAbsoluteError.value = response.data.mean_absolute_error.toFixed(2);
-    r2Score.value = response.data.r2_score.toFixed(2);
-    accuracyPercentage.value = (response.data.r2_score * 100).toFixed(2);
-  }).catch((error) => {
-    console.error('Failed to get cinema metrics:', error);
-  });
-}
 
 const chartOptions = ref({
   chart: {
@@ -229,7 +200,7 @@ const handleFileUpload = async (event) => {
     console.log(response)
     message.value = response.data.message;
     successDialogVisible.value = true;
-    await fetchVisitorData(); // Refetch data after upload
+    fetchVisitorData(); // Refetch data after upload
   } catch (error) {
     console.error('File upload failed:', error)
     message.value = error.response.data.message;
@@ -247,17 +218,11 @@ const uploadFile = () => {
 
 onMounted(() => {
   fetchVisitorData()
-  getCinemaMetrics()
 })
 
 </script>
 
 <style scoped>
-.layout-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .q-page {
   display: flex;
   flex-direction: column;
@@ -291,13 +256,6 @@ onMounted(() => {
   margin-bottom: 20px;
   width: 75%;
   padding: 1em;
-  flex: 1 1 60%;
-  min-width: 300px;
-}
-.metrics-section {
-  flex: 1 1 40%;
-  min-width: 250px;
-  margin-top: 20px;
 }
 
 .bar-chart {
@@ -320,10 +278,6 @@ input[type="file"] {
 
   .bar-chart {
     padding: 0.5em;
-  }
-
-  .metrics-section {
-    margin-top: 3em;
   }
 
   .week-btn,
