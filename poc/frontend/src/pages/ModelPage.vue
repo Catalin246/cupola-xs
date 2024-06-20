@@ -14,12 +14,45 @@
               <div><strong>R²:</strong> {{ formatDecimals(model.r2_score) }}</div>
               <div><strong>Type:</strong> {{ model.model_type }}</div>
             </div>
+            <button class="delete-button" @click="confirmDelete(model)"><i class="fa-solid fa-trash"></i></button>
           </div>
         </div>
       </div>
+
+      <!-- Confirmation Dialog -->
+      <q-dialog v-model="deleteDialogVisible" persistent>
+        <q-card class="custom-card">
+          <q-card-section class="text-h6">
+            Confirm Deletion
+          </q-card-section>
+          <q-card-section>
+            Are you sure you want to delete this model?
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup />
+            <q-btn flat label="Delete" color="negative" @click="deleteModel" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Error Dialog -->
+      <q-dialog v-model="errorDialogVisible" persistent>
+        <q-card class="custom-card">
+          <q-card-section class="text-h6">
+            Error
+          </q-card-section>
+          <q-card-section>
+            {{ errorMessage }}
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Close" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </q-page>
 </template>
+
 
 <script>
 import { ref, onMounted } from 'vue';
@@ -33,6 +66,10 @@ export default {
   setup() {
     const router = useRouter();
     const models = ref([]);
+    const deleteDialogVisible = ref(false);
+    const errorDialogVisible = ref(false);
+    const errorMessage = ref('');
+    const modelToDelete = ref(null);
 
     const handleClose = () => {
       router.push('/');
@@ -55,6 +92,24 @@ export default {
       return input.toFixed(2);
     };
 
+    const confirmDelete = (model) => {
+      modelToDelete.value = model;
+      deleteDialogVisible.value = true;
+    };
+
+    const deleteModel = async () => {
+      try {
+        await api.deleteModel(modelToDelete.value.id);
+        models.value = models.value.filter(model => model.id !== modelToDelete.value.id);
+        deleteDialogVisible.value = false;
+        modelToDelete.value = null;
+      } catch (error) {
+        errorMessage.value = error.response?.data?.message || 'Failed to delete model';
+        errorDialogVisible.value = true;
+        deleteDialogVisible.value = false;
+      }
+    };
+
     onMounted(() => {
       fetchModels();
     });
@@ -63,7 +118,12 @@ export default {
       handleClose,
       models,
       formatDate,
-      formatDecimals
+      formatDecimals,
+      confirmDelete,
+      deleteDialogVisible,
+      deleteModel,
+      errorDialogVisible,
+      errorMessage
     };
   },
 };
@@ -130,6 +190,7 @@ export default {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Add this line */
   margin: 2%;
   margin-left: 25%;
   width: 100%; /* Default to full width */
@@ -155,5 +216,23 @@ export default {
   color: #4e8ff1;
 }
 
+.delete-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 16px;
+  transition: color 0.3s ease;
+}
+
+.delete-button:hover {
+  color: #a71d2a;
+}
+
+.custom-card {
+  border-radius: 16px; 
+}
 </style>
+
 

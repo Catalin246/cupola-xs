@@ -84,5 +84,12 @@ export default {
         'Authorization': `${localStorage.getItem('jwt')}`,
       }
     });
+  },
+  deleteModel(modelId) {
+    return apiClient.delete(`/ai_model/${modelId}`, {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+      }
+    });
   }
 };
