@@ -67,5 +67,15 @@ export default {
   },
   getHistoricalDataWifi() {
     return apiClient.get('/wifi/');
+  },
+  retrainModel(type) {
+    const formData = new FormData();
+    formData.append('type', type);
+    return apiClient.post('/ai_model/retrain', formData, {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
   }
 };
