@@ -67,5 +67,36 @@ export default {
   },
   getHistoricalDataWifi() {
     return apiClient.get('/wifi/');
+  },
+  retrainModel(type) {
+    const formData = new FormData();
+    formData.append('type', type);
+    return apiClient.post('/ai_model/retrain', formData, {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
+  getModels() {
+    return apiClient.get('/ai_model/', {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+      }
+    });
+  },
+  deleteModel(modelId) {
+    return apiClient.delete(`/ai_model/${modelId}`, {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+      }
+    });
+  },
+  activateModel(modelId) {
+    return apiClient.put(`/ai_model/${modelId}`, {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+      }
+    });
   }
 };

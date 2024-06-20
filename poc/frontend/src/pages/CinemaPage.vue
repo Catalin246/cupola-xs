@@ -230,6 +230,13 @@ const handleFileUpload = async (event) => {
     message.value = response.data.message;
     successDialogVisible.value = true;
     await fetchVisitorData(); // Refetch data after upload
+
+    // Trigger retraining after successful file upload
+    const retrainResponse = await api.retrainModel('cinema');
+      if (retrainResponse.data.success) {
+        console.log('Model retrained successfully');
+        // Handle success (show message, dialog, etc.)
+      }
   } catch (error) {
     console.error('File upload failed:', error)
     message.value = error.response.data.message;

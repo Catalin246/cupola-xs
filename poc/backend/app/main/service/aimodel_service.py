@@ -6,6 +6,13 @@ from tensorflow.keras.optimizers import Adam
 import numpy as np
 from .. import db
 from ..model.aimodel import AIModel
+import os
+from flask import abort
+
+import os
+from dotenv import load_dotenv, set_key
+
+load_dotenv()
 
 def get_all_models():
     return AIModel.query.all()
@@ -75,3 +82,61 @@ def retrain_and_save_model(all_data, model_type):
     )
     db.session.add(new_model)
     db.session.commit()
+
+def delete_model(model_id):
+    # Query the model from the database by ID
+    model = AIModel.query.get(model_id)
+    
+    if model is None:
+        abort(404, description="Model not found")
+    
+    # Check if the model is active
+    if model.is_active:
+        raise ValueError("The model is currently in use and cannot be deleted.")
+    
+    # Delete the model file from the filesystem
+    try:
+        if os.path.exists(model.model_name):
+            os.remove(model.model_name)
+        else:
+            raise FileNotFoundError(f"The model file {model.model_name} does not exist.")
+    except Exception as e:
+        raise e
+    
+    # Remove the model entry from the database
+    db.session.delete(model)
+    db.session.commit()
+
+def update_model_is_active(model_id):
+    # Query the model from the database by ID
+    model = AIModel.query.get(model_id)
+    
+    if model is None:
+        abort(404, description="Model not found")
+    
+    # Ensure only one model of each type is active
+    if model.is_active:
+        raise ValueError("This model is already active.")
+    
+    # Get all models of the same type
+    all_models_of_same_type = AIModel.query.filter_by(model_type=model.model_type).all()
+
+    # Deactivate all models of the same type
+    for other_model in all_models_of_same_type:
+        if other_model.is_active:
+            other_model.is_active = False
+            db.session.add(other_model)
+    
+    # Activate the selected model
+    model.is_active = True
+    db.session.add(model)
+    db.session.commit()
+
+    # Update the .env file with the new active model path
+    env_file = '.env'
+    key = f'{model.model_type.upper()}_MODEL_PATH'
+    value = model.model_name
+    set_key(env_file, key, value)
+
+    # Reload .env variables
+    load_dotenv()

@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+import os
 
 import pickle
 
@@ -10,13 +11,19 @@ from tensorflow import keras
 from tensorflow.keras.models import load_model
 
 from .config import config_by_name
+from dotenv import load_dotenv
+
+load_dotenv()
+
+wifi_model_path = os.getenv('WIFI_MODEL_PATH')
+cinema_model_path = os.getenv('CINEMA_MODEL_PATH')
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
 
-ml_model_wifi_hourly = load_model('models/wifi/wifidata_model_20240619_233511.h5')
+ml_model_wifi_hourly = load_model(wifi_model_path)
 
-ml_model_cinema = load_model('models/cinema/cinemadata_model_20240619_233538.h5')
+ml_model_cinema = load_model(cinema_model_path)
 
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
