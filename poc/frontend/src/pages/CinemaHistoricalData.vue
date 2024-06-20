@@ -1,21 +1,25 @@
 <template>
   <q-page class="q-pa-md">
-  <div class="header">
+    <div class="header">
       <h3>Cinema Historical Data</h3>
-  </div>
-    <div class="container">
-      <div v-for="(chart, index) in charts" :key="index" class="chart-container">
-        <h4>{{ chart.year }}</h4>
-        <apexchart
-          class="line-chart"
-          type="line"
-          :options="chart.options"
-          :series="chart.series"
-        />
-  </div>
+    </div>
+    <div class="graph-container">
+      <q-card class="historic-cinema">
+        <q-card-section class="historic-cinema-section">
+          <div v-for="(chart, index) in charts" :key="index" class="chart-container">
+            <apexchart
+              class="line-chart"
+              type="line"
+              :options="chart.options"
+              :series="chart.series"
+            />
+          </div>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
+
 
 <script setup>
 import api from '../../axios';
@@ -90,10 +94,24 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
 }
-.container {
+
+.graph-container {
+  display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1em;
+  height: 100%;
 }
 
+.historic-cinema {
+  width: 80%;
+  padding: 1em 2em;
+}
+.chart-container {
+  margin-bottom: 3em;
+}
+
+.line-chart {
+  max-width: 100%;
+}
 </style>
+
