@@ -77,5 +77,12 @@ export default {
         'Content-Type': 'multipart/form-data'
       }
     });
+  },
+  getModels() {
+    return apiClient.get('/ai_model/', {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+      }
+    });
   }
 };
