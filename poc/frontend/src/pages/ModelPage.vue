@@ -9,9 +9,9 @@
             <div>
               <div><strong>Date:</strong> {{ formatDate(model.date) }}</div>
               <div><strong>Status:</strong> {{ model.is_active ? 'This model is in use' : 'This model is not currently in use' }}</div>
-              <div><strong>MSE:</strong> {{ model.mean_squared_error }}</div>
-              <div><strong>MAE:</strong> {{ model.mean_absolute_error }}</div>
-              <div><strong>R²:</strong> {{ model.r2_score }}</div>
+              <div><strong>MSE:</strong> {{ formatDecimals(model.mean_squared_error) }}</div>
+              <div><strong>MAE:</strong> {{ formatDecimals(model.mean_absolute_error) }}</div>
+              <div><strong>R²:</strong> {{ formatDecimals(model.r2_score) }}</div>
               <div><strong>Type:</strong> {{ model.model_type }}</div>
             </div>
           </div>
@@ -51,6 +51,10 @@ export default {
       return dayjs(dateString).format('YYYY-MM-DD HH:mm:ss');
     };
 
+    const formatDecimals = (input) => {
+      return input.toFixed(2);
+    };
+
     onMounted(() => {
       fetchModels();
     });
@@ -58,7 +62,8 @@ export default {
     return {
       handleClose,
       models,
-      formatDate
+      formatDate,
+      formatDecimals
     };
   },
 };
@@ -150,9 +155,5 @@ export default {
   color: #4e8ff1;
 }
 
-/* Media query for larger screens */
-/* @media (min-width: 992px) {
-  .model-card {
-    width: 25%; /* Set to 25% of the screen width */
 </style>
 
