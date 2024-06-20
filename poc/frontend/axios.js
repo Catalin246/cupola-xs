@@ -91,5 +91,12 @@ export default {
         'Authorization': `${localStorage.getItem('jwt')}`,
       }
     });
+  },
+  activateModel(modelId) {
+    return apiClient.put(`/ai_model/${modelId}`, {
+      headers: {
+        'Authorization': `${localStorage.getItem('jwt')}`,
+      }
+    });
   }
 };

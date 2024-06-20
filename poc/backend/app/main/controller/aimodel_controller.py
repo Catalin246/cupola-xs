@@ -68,6 +68,7 @@ class AIModel(Resource):
     def put(self, model_id):
         """Update a model"""
         try:
+            update_model_is_active(model_id)
             return {'message': 'Model successfully updated'}, 200
         except ValueError as e:
             abort(400, description=str(e))

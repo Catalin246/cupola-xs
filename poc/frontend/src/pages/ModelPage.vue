@@ -14,7 +14,10 @@
               <div><strong>R²:</strong> {{ formatDecimals(model.r2_score) }}</div>
               <div><strong>Type:</strong> {{ model.model_type }}</div>
             </div>
-            <button class="delete-button" @click="confirmDelete(model)"><i class="fa-solid fa-trash"></i></button>
+            <div>
+              <button class="delete-button" @click="confirmDelete(model)"><i class="fa-solid fa-trash"></i></button>
+              <button v-if="!model.is_active" class="activate-button" @click="activateModel(model)"><i class="fa-solid fa-check"></i></button>
+            </div>
           </div>
         </div>
       </div>
@@ -52,7 +55,6 @@
     </div>
   </q-page>
 </template>
-
 
 <script>
 import { ref, onMounted } from 'vue';
@@ -110,6 +112,16 @@ export default {
       }
     };
 
+    const activateModel = async (model) => {
+      try {
+        await api.activateModel(model.id);
+        fetchModels(); 
+      } catch (error) {
+        errorMessage.value = error.response?.data?.message || 'Failed to activate model';
+        errorDialogVisible.value = true;
+      }
+    };
+
     onMounted(() => {
       fetchModels();
     });
@@ -123,7 +135,8 @@ export default {
       deleteDialogVisible,
       deleteModel,
       errorDialogVisible,
-      errorMessage
+      errorMessage,
+      activateModel
     };
   },
 };
@@ -230,9 +243,24 @@ export default {
   color: #a71d2a;
 }
 
+.activate-button {
+  background: none;
+  border: none;
+  color: #28a745;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 16px;
+  transition: color 0.3s ease;
+}
+
+.activate-button:hover {
+  color: #1e7e34;
+}
+
 .custom-card {
   border-radius: 16px; 
 }
 </style>
+
 
 
