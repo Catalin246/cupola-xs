@@ -6,6 +6,8 @@ from tensorflow.keras.optimizers import Adam
 import numpy as np
 from .. import db
 from ..model.aimodel import AIModel
+import os
+from flask import abort
 
 def get_all_models():
     return AIModel.query.all()
@@ -74,4 +76,28 @@ def retrain_and_save_model(all_data, model_type):
         is_active=False
     )
     db.session.add(new_model)
+    db.session.commit()
+
+def delete_model(model_id):
+    # Query the model from the database by ID
+    model = AIModel.query.get(model_id)
+    
+    if model is None:
+        abort(404, description="Model not found")
+    
+    # Check if the model is active
+    if model.is_active:
+        raise ValueError("The model is currently in use and cannot be deleted.")
+    
+    # Delete the model file from the filesystem
+    try:
+        if os.path.exists(model.model_name):
+            os.remove(model.model_name)
+        else:
+            raise FileNotFoundError(f"The model file {model.model_name} does not exist.")
+    except Exception as e:
+        raise e
+    
+    # Remove the model entry from the database
+    db.session.delete(model)
     db.session.commit()

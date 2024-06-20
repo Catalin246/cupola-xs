@@ -1,10 +1,10 @@
 import csv
 from io import StringIO
-from flask import request
+from flask import request, abort
 from flask_restx import Resource
 from ..service.wifi_data_service import get_all_wifi_data
 from ..service.cinema_data_service import get_all_cinema_data
-from ..service.aimodel_service import retrain_and_save_model, get_all_models
+from ..service.aimodel_service import retrain_and_save_model, get_all_models, delete_model
 from app.main.util.dto import AIModelDto
 from app.main.util.decorator import admin_token_required
 from werkzeug.datastructures import FileStorage
@@ -43,3 +43,21 @@ class AIModelRetrain(Resource):
         retrain_and_save_model(all_data, model_type)
 
         return {'message': f'{model_type.capitalize()} model retrained and saved successfully'}, 201
+
+@api.route('/<int:model_id>')
+@api.param('model_id', 'The Model identifier')
+class AIModel(Resource):
+    @api.response(204, 'Model successfully deleted.')
+    @api.doc('Delete a model')
+    @admin_token_required
+    def delete(self, model_id):
+        """Delete a model"""
+        try:
+            delete_model(model_id)
+            return '', 204
+        except ValueError as e:
+            abort(400, description=str(e))
+        except FileNotFoundError as e:
+            abort(404, description=str(e))
+        except Exception as e:
+            abort(500, description=str(e))
