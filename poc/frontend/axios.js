@@ -63,9 +63,9 @@ export default {
     return apiClient.get('/predict/wifi/metrics');
   },
   getHistoricalDataCinema() {
-    return apiClient.get('/cinema');
+    return apiClient.get('/cinema/');
   },
   getHistoricalDataWifi() {
-    return apiClient.get('/wifi');
+    return apiClient.get('/wifi/');
   }
 };
