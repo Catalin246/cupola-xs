@@ -108,7 +108,7 @@ def get_wifi_model_metrics():
 
     seq_length = 7
     X = prepare_sequences(wifi_devices_values, seq_length)
-    predictions = ml_model_wifi.predict(X).tolist()
+    predictions = ml_model_wifi_hourly.predict(X).tolist()
 
     # Ensure predictions are in the correct format
     predictions = [pred[0] for pred in predictions]
