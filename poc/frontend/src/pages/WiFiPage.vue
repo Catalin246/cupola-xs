@@ -5,26 +5,32 @@
              class="week-btn" style="border-top-left-radius: 25px; border-bottom-left-radius: 25px;" />
       <q-btn :label="currentWeekLabel" disable class="week-dropdown" />
       <q-btn icon-right="arrow_forward" label="Next Week" @click="changeWeek(1)" :disable="!canNavigate(1)"
-             class="week-btn" style="border-top-right-radius: 25px ; border-bottom-right-radius: 25px;" />
+             class="week-btn" style="border-top-right-radius: 25px; border-bottom-right-radius: 25px;" />
     </div>
+
     <div class="chart-container">
+      <div style="text-align: center; margin-bottom: 10px; padding-bottom: 1em">
+        Click on a day to show hourly predictions.
+      </div>
       <apexchart class="bar-chart" type="bar" :options="chartOptions" :series="series" @dataPointSelection="onBarClick" />
     </div>
-    <!-- Display selected date -->
+
+
+    <!-- Selected Date Section -->
     <div v-if="selectedDate" class="selected-date q-mt-md">
       <q-card class="hourly-card">
         <q-card-section>
           <div class="text-h6">Selected Date</div>
           <div>{{ selectedDate }}</div>
         </q-card-section>
-
-    <!-- New Line Chart Section -->
-    <div v-if="selectedDayHourlyData.length > 0" >
-      <apexchart class="line-chart" type="line" :options="lineChartOptions" :series="lineSeries" />
-    </div>
+        <!-- Line Chart Section -->
+        <div v-if="selectedDayHourlyData.length > 0">
+          <apexchart class="line-chart" type="line" :options="lineChartOptions" :series="lineSeries" />
+        </div>
       </q-card>
     </div>
-    <!-- Existing Metrics Section -->
+
+    <!-- Model Performance Metrics Section -->
     <div class="metrics-section q-pa-md">
       <q-card>
         <q-card-section>
@@ -36,20 +42,23 @@
         </q-card-section>
       </q-card>
     </div>
-    <!--  <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable </h5> -->
-     <template v-if="hasToken">
-       <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
-     </template>
-     <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
-     <q-dialog v-model="successDialogVisible" title="Success">
-       <div style="background-color: #66FF66; padding: 1rem;">{{ message }}</div>
-     </q-dialog>
 
-     <q-dialog v-model="errorDialogVisible" title="Error">
-       <div style="background-color: #ffcccc; padding: 1rem;">{{ message }}</div>
-     </q-dialog>
-   </q-page>
- </template>
+    <!-- Upload CSV/Excel Button -->
+    <template v-if="hasToken">
+      <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
+    </template>
+    <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
+
+    <!-- Success and Error Dialogs -->
+    <q-dialog v-model="successDialogVisible" title="Success">
+      <div style="background-color: #66FF66; padding: 1rem;">{{ message }}</div>
+    </q-dialog>
+
+    <q-dialog v-model="errorDialogVisible" title="Error">
+      <div style="background-color: #ffcccc; padding: 1rem;">{{ message }}</div>
+    </q-dialog>
+  </q-page>
+</template>
 
  <script setup>
  import { ref, computed, onMounted } from 'vue'
