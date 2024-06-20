@@ -4,7 +4,7 @@ from flask import request, abort
 from flask_restx import Resource
 from ..service.wifi_data_service import get_all_wifi_data
 from ..service.cinema_data_service import get_all_cinema_data
-from ..service.aimodel_service import retrain_and_save_model, get_all_models, delete_model
+from ..service.aimodel_service import retrain_and_save_model, get_all_models, delete_model, update_model_is_active
 from app.main.util.dto import AIModelDto
 from app.main.util.decorator import admin_token_required
 from werkzeug.datastructures import FileStorage
@@ -59,5 +59,17 @@ class AIModel(Resource):
             abort(400, description=str(e))
         except FileNotFoundError as e:
             abort(404, description=str(e))
+        except Exception as e:
+            abort(500, description=str(e))
+
+    @api.response(200, 'Model successfully updated.')
+    @api.doc('Update a model')
+    @admin_token_required
+    def put(self, model_id):
+        """Update a model"""
+        try:
+            return {'message': 'Model successfully updated'}, 200
+        except ValueError as e:
+            abort(400, description=str(e))
         except Exception as e:
             abort(500, description=str(e))
