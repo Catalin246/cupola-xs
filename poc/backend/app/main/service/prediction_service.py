@@ -48,14 +48,13 @@ def make_wifi_predictions(model, values, latest_date, predict_window, seq_length
             'hourly_values': []
         }
         for j in range(24):
-            hour.append(latest_date + timedelta(hours=j - 12))
+            hour.append(latest_date + timedelta(hours=j + 1))
             hourly_values.append(predictions[i + j][0])
 
             hourly_data = {
                 'hour': hour[j].strftime('%H:%M:%S'),
                 'value': round(hourly_values[j])
             }
-
             response['hourly_values'].append(hourly_data)
         responses.append(response)
     return responses
