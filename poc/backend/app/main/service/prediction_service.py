@@ -48,7 +48,7 @@ def make_wifi_predictions(model, values, latest_date, predict_window, seq_length
             'hourly_values': []
         }
         for j in range(24):
-            hour.append(latest_date + timedelta(hours=j + 1))
+            hour.append(latest_date + timedelta(hours=j - 12))
             hourly_values.append(predictions[i + j][0])
 
             hourly_data = {
@@ -68,7 +68,6 @@ def predict_wifi_data(predict_window):
     responses = make_wifi_predictions(ml_model_wifi_hourly, wifi_devices_values, latest_wifi_record_date, predict_window, 7)
 
     return responses
-
 
 def predict_cinema_data(predict_window):
     cinema_data = get_all_cinema_data()
