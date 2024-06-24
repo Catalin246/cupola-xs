@@ -2,6 +2,7 @@ from app.main import ml_model_cinema, ml_model_wifi_hourly
 
 from app.main.service.wifi_data_service import get_all_wifi_data
 from app.main.service.cinema_data_service import get_all_cinema_data
+from ..model.aimodel import AIModel
 
 from datetime import timedelta
 
@@ -84,37 +85,16 @@ def predict_cinema_data(predict_window):
     return responses
 
 
-def get_cinema_model_metrics():
-    cinema_data = get_all_cinema_data()
-    cinema_visitors_values = [data.visitors for data in cinema_data]
+def get_metrics(model_type):
+    all_models = AIModel.query.all()
+    active_model = 0
 
-    seq_length = 7
-    X = prepare_sequences(cinema_visitors_values, seq_length)
-    predictions = ml_model_cinema.predict(X).tolist()
-
-    # Ensure predictions are in the correct format
-    predictions = [pred[0] for pred in predictions]
+    for model in all_models:
+        if model.model_type==model_type and model.is_active:
+            active_model = model
 
     return {
-        'mean_squared_error': mean_squared_error(cinema_visitors_values[seq_length:], predictions),
-        'mean_absolute_error': mean_absolute_error(cinema_visitors_values[seq_length:], predictions),
-        'r2_score': r2_score(cinema_visitors_values[seq_length:], predictions)
-    }
-
-
-def get_wifi_model_metrics():
-    wifi_data = get_all_wifi_data()
-    wifi_devices_values = [data.total_online_devices for data in wifi_data]
-
-    seq_length = 7
-    X = prepare_sequences(wifi_devices_values, seq_length)
-    predictions = ml_model_wifi_hourly.predict(X).tolist()
-
-    # Ensure predictions are in the correct format
-    predictions = [pred[0] for pred in predictions]
-
-    return {
-        'mean_squared_error': mean_squared_error(wifi_devices_values[seq_length:], predictions),
-        'mean_absolute_error': mean_absolute_error(wifi_devices_values[seq_length:], predictions),
-        'r2_score': r2_score(wifi_devices_values[seq_length:], predictions)
+        'mean_squared_error': active_model.mean_squared_error,
+        'mean_absolute_error': active_model.mean_absolute_error,
+        'r2_score': active_model.r2_score
     }

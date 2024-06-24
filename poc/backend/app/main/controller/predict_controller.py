@@ -2,7 +2,7 @@ from flask import request
 
 from flask_restx import Resource
 
-from ..service.prediction_service import predict_wifi_data, predict_cinema_data, get_cinema_model_metrics, get_wifi_model_metrics
+from ..service.prediction_service import predict_wifi_data, predict_cinema_data, get_metrics
 
 from app.main.util.dto import WifiPredictDto
 from app.main.util.dto import CinemaPredictDto
@@ -28,10 +28,10 @@ class CinemaPrediction(Resource):
 class CinemaMetrics(Resource):
     @api.doc('get metrics for cinema model')
     def get(self):
-        return get_cinema_model_metrics()
+        return get_metrics('cinema')
 
 @api.route("/wifi/metrics")
 class WifiMetrics(Resource):
     @api.doc('get metrics for wifi model')
     def get(self):
-        return get_wifi_model_metrics()
+        return get_metrics('wifi')
