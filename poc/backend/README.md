@@ -87,7 +87,7 @@ ex: `docker push cupola.azurecr.io/cupola-xs-app:1`
 
  url_exaple: http://20.61.35.118:5000/
 
-# Run the project wuth Flask
+# Run the project with Flask
 
 ## Terminal commands
 Note: make sure you have pip and virtualenv installed. To run test: flask test

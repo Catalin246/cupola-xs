@@ -11,7 +11,7 @@ Using this data, an LSTM time-series model is build to give predictions. The fro
 This repository contains both the front-end and back-end, however they are separetely containerized using Docker.
 Backend is located at 'poc/backend' and Frontend is located at 'poc/frontend'.
 
-The backend folder contains an additional README file containing backend-specific information.
+The backend folder contains an additional README file containing backend-specific information, including deploying the project using Azure.
 
 ## Prerequisites
 ### Ensure that Docker is installed and running on your system.
