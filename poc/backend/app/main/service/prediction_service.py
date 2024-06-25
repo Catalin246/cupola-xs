@@ -7,9 +7,10 @@ from ..model.aimodel import AIModel
 from datetime import timedelta
 
 
-# using number 7 as the default sequence length because a week is 7 days long
+# using number 7 as the default sequence length because it provides the best accuracy (tested)
 def prepare_sequences(values, seq_length):
     sequences = []
+    #Sequence each value in a batch equal to the 'seq_length' variable
     for i in range(len(values) - seq_length):
         sequences.append(values[i:i + seq_length])
     return sequences
@@ -19,6 +20,8 @@ def make_cinema_predictions(model, values, latest_date, predict_window, seq_leng
     predictions = model.predict(sequences).tolist()
 
     responses = []
+
+    #Based on how many predicted values are requested, iterate through that many days past the most recent known value from the database 
     for i in range(predict_window):
         next_day = latest_date + timedelta(days=i + 1)
         response = {
@@ -35,6 +38,7 @@ def make_wifi_predictions(model, values, latest_date, predict_window, seq_length
 
     responses = []
 
+    #Based on how many predicted values are requested, iterate through that many hours past the most recent known value from the database
     for i in range(predict_window):
         hour = []
         hourly_values = []
@@ -46,6 +50,7 @@ def make_wifi_predictions(model, values, latest_date, predict_window, seq_length
             'max_online_devices': round(max_value[0]),
             'hourly_values': []
         }
+        #For each day, group next 24 values as hourly values of that day 
         for j in range(24):
             hour.append(latest_date + timedelta(hours=j + 1))
             hourly_values.append(predictions[i + j][0])
