@@ -6,8 +6,6 @@ from ..model.aimodel import AIModel
 
 from datetime import timedelta
 
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-
 
 # using number 7 as the default sequence length because a week is 7 days long
 def prepare_sequences(values, seq_length):
