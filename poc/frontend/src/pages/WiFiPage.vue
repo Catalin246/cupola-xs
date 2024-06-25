@@ -42,8 +42,6 @@
       </q-card>
     </div>
 
-    <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable</h5>
-
     <!-- Upload CSV/Excel Button -->
     <template v-if="hasToken">
       <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
@@ -260,12 +258,7 @@ const updateChartData = () => {
     const matchingData = monthlyData.value.find(item => dayjs(item.date).isSame(currentDate, 'day'));
     currentWeekDevices.push(matchingData ? matchingData.devices : 0);
 
-    // If the item.date is 30 days or more after the first item.date, then the color will be red
-    if (matchingData && dayjs(matchingData.date).diff(dayjs(monthlyData.value[0].date), 'day') >= 30) {
-      currentWeekColors.push('#FFD542');
-    } else {
-      currentWeekColors.push('#F0803C');
-    }
+    currentWeekColors.push('#F0803C');
 
     // Build the xAxis categories
     xAxisCategories.push(dayjs(currentDate).format('dddd')); // Use dayjs to format the day

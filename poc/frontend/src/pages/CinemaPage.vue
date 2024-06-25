@@ -22,7 +22,6 @@
         </q-card-section>
       </q-card>
     </div>
-    <h5 align="center">Please note predictions after {{ accuratePredictionDate }} are less reliable </h5>
     <template v-if="hasToken">
       <q-btn label="Upload CSV/Excel" @click="uploadFile" color="primary" />
     </template>
@@ -175,12 +174,7 @@ const updateChartData = () => {
     const currentDate = currentWeek.value.add(i, 'day').toDate();
     const matchingData = monthlyData.value.find(item => dayjs(item.date).isSame(currentDate, 'day'));
     currentWeekVisitors.push(matchingData ? matchingData.visitors : 0);
-    // If the item.date is 30 days or more after the first item.date, then the color will be red
-    if (matchingData && dayjs(matchingData.date).diff(dayjs(monthlyData.value[0].date), 'day') >= 30) {
-      currentWeekColors.push('#FFD542');
-    } else {
-      currentWeekColors.push('#7DCFB6');
-    }
+    currentWeekColors.push('#7DCFB6');
   }
   // Update the series with the current week's data
   series.value = [{ name: 'Cinema Visitors', data: currentWeekVisitors }];
